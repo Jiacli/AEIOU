@@ -22,6 +22,41 @@ Our goal is to build a back end system, which can extract fluent and reasonable 
 The toolkits we may use are NLTK library, Berkeley parser, WordNet, Lancaster Stemmer.
 
 \section{Detailed Plan}
+\subsection{General Questions}
+\begin{itemize}
+\item How are you going to use the development data to improve your system?
+\\We are going to make fully use of the development data to tuning training model parameters, improve system performance on edge cases and do cross validation to avoid over fitting.
+
+\item There going to be a relationship between the asking and answering components of your system, or are you going to implement them independently?\\
+We would like to first build the question asking system, and then build the answering system based on the asking system as both of them will share many similar components. Moreover, we will also evaluate our question answering system using the questions from asking system.
+
+\item Are you going to share code, data inside your team?
+\\Yes, we are going to use Github to share the code and manage the development process. All files will be shared through on-line documentation and we will keep logs for meetings to track the team progress.
+
+\item Are you going to coordinate development inside the team? \\
+Yes, we will divide the work into different parts that satisfy each team member's interests. Then we will meet regularly to discuss the project and make sure that everybody is making progress.
+
+\end{itemize}
+
+
+\subsection{Technical Design Proposal}
+For question asking part:
+\begin{itemize}
+\item We would like to first design some question asking and answering templates which contain different rules for generating valid and reasonable questions and answers. (Note: These templates as well as some other needed information that can be computed off-line will be stored in the database. )
+\item Next, we will utilize parser to generate parse tree for each sentence, and match the components of sentences to different part of templates.
+\item Based on the type of question we would like to generate, different grammar components of the sentence will substitute the corresponding parts in question templates to form valid and reasonable questions.
+\end{itemize}
+For question answering part:
+\begin{itemize}
+\item We would first identify the question domains by parsing the question. For certain domain, we extract corresponding name entities from the sentence.
+\item Next, we will utilize those name entities as key words to retrieve relevant sentences in the given documents.
+\item For each relevant sentence, we will parse the sentence and find out the different sentence components that may be the candidate answers.
+\item For simple questions, we evaluate the candidate answers and pick the most likely one and use template to form the answer. For hard questions, we may need further inference to make the final decision.
+\end{itemize}
+
+
+\subsection{Time Schedule}
+
 
 \begin{itemize}
 \item[(1)]Feb. 6 - Feb. 24 \\ Define the different question types, design the detail of Q\&A system, and implement the prototype of the information extraction and question generation part.
