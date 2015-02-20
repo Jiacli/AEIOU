@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 
+# command line : python ./ask.py ml.txt output.txt
 import sys
-import os
 import re
 import string
-import generateQuestion
-
+import testNLTK
 
 # gloabl control variables
 verbose = True
-# os.environ['STANFORD_PARSER'] = '/Users/sirrie/Desktop/11611/project/jars'
-# os.environ['STANFORD_MODELS'] = '/Users/sirrie/Desktop/11611/project/jars'
 
 # main routine
 def main(args):
@@ -24,14 +21,13 @@ def main(args):
 def ask(sentences):
     # generate questions based on valid sentence list
     q_list = []
-    counter = 0
     for sentence in sentences:
-        rst = generateQuestion.generateEasyQuestion(sentence)
+        rst = testNLTK.generateEasyQuestion(sentence)
         if len(rst) > 0:
-            counter += 1
             q_list.append(rst)
-            print counter, " , ", rst
+    print q_list
     return q_list
+
 
     
 # article reading control parameters    
