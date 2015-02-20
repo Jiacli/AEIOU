@@ -57,3 +57,4 @@ target/
 *.bak
 *.bbl
 *.blg
+code/stanford-parser-3.5.1-models.jar
