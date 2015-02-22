@@ -1,5 +1,6 @@
 import os
 from nltk.parse import stanford
+from nltk.tree import Tree
 
 class parser:
 	def __init__(self):
@@ -10,20 +11,43 @@ class parser:
 		self.parser = stanford.StanfordParser(model_path=self.path+"englishPCFG.ser.gz")
 
 	def generateWho(self, sents):
-		ques = []
-		sentences = self.parser.raw_parse_sents(sents)
-		#sentences[1].draw()
-		print sentences[1].subtrees()[0].label()
-		#self.dfs(sentences[0], ques)
-		print ques
+		ques = ''
+		sentences = self.parser.raw_parse(sents)
+		root = sentences[0][0]
+		if root[0].label() == 'PP' and root[1].label() == ',':
+			if root[2].label() == 'NP':
+				ques = self.dfs(root, 0, 3)
+		elif root[0].label() == 'NP':
+				ques = self.dfs(root, 0, 1)
+		else:
+			return ques
+
+		quesWho = 'Who'+ques
+		quesWhat = 'What'+ques
+		print quesWho
+		print quesWhat
+		return ques
 
 
-	def dfs(self, sentences, ques):
-		for subtree in sentences.subtrees():
-			ques.append(subtree.label())
-			self.dfs(subtree, ques)
+	def dfs(self, sentences, level, begin):
+		ques = ''
+		index = 0
+		for child in sentences:
+			if index < begin:
+				index += 1
+				continue
+			if level == 0 and child.label() == '.':
+				ques += '?'
+				return ques				
+			elif isinstance(child, Tree):
+				ques += self.dfs(child, level+1, 0)
+			else:
+				ques += ' '+child
+			index += 1
+		return ques
 
 
 if __name__=="__main__":
 	model = parser()
-	model.generateWho(("USS Constitution is a wooden-hulled, three-masted heavy frigate of the U.S. Navy.","He also likes eating sausage, based on the assumption."))
+	#model.generateWho(("USS Constitution is a wooden-hulled, three-masted heavy frigate of the U.S. Navy."))
+	model.generateWho(("Not like him, my dog also likes eating sausage."))

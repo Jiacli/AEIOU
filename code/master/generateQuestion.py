@@ -3,10 +3,12 @@ import os
 from nltk.parse import stanford
 from nltk.stem.snowball import SnowballStemmer
 import nltk
+from nltk.tree import Tree
 
-
-os.environ['STANFORD_PARSER'] = '/Users/sirrie/Desktop/11611/project/jars'
-os.environ['STANFORD_MODELS'] = '/Users/sirrie/Desktop/11611/project/jars'
+path = '/Users/XiaoqiuHuang/Google_Drive/11-411/AEIOU/code/Xiaoqiu/jars/'
+os.environ['STANFORD_PARSER'] = path
+os.environ['STANFORD_MODELS'] = path
+parser = stanford.StanfordParser(model_path=path+"englishPCFG.ser.gz")
 
 def checkAuxiliary(auxSet, tokens):
     for token in tokens:
@@ -77,3 +79,34 @@ def generateEasyQuestion(originalSentence):
     else:
         rst = question
     return rst
+
+def generateWho(sents):
+        ques = ''
+        sentences = parser.raw_parse(sents)
+        root = sentences[0][0]
+        if root[0].label() == 'PP' and root[1].label() == ',':
+            if root[2].label() == 'NP':
+                ques = dfs(root, 0, 3)
+        elif root[0].label() == 'NP':
+                ques = dfs(root, 0, 1)
+        else:
+            return ques
+
+        quesWho = 'Who'+ques+'?'
+        #quesWhat = 'What'+ques
+        return quesWho
+
+
+def dfs(sentences, level, begin):
+    ques = ''
+    index = 0
+    for child in sentences:
+        if index < begin:
+            index += 1
+            continue           
+        elif isinstance(child, Tree):
+            ques += dfs(child, level+1, 0)
+        else:
+            ques += ' '+child
+        index += 1
+    return ques

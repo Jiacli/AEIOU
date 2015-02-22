@@ -26,7 +26,8 @@ def ask(sentences):
     q_list = []
     counter = 0
     for sentence in sentences:
-        rst = generateQuestion.generateEasyQuestion(sentence)
+        #rst = generateQuestion.generateEasyQuestion(sentence)
+        rst = generateQuestion.generateWho(sentence)
         if len(rst) > 0:
             counter += 1
             q_list.append(rst)
