@@ -5,7 +5,7 @@ from nltk.stem.snowball import SnowballStemmer
 import nltk
 from nltk.tree import Tree
 
-path = '/Users/XiaoqiuHuang/Google_Drive/11-411/AEIOU/code/Xiaoqiu/jars/'
+path = '../../../jars/'
 os.environ['STANFORD_PARSER'] = path
 os.environ['STANFORD_MODELS'] = path
 parser = stanford.StanfordParser(model_path=path+"englishPCFG.ser.gz")
