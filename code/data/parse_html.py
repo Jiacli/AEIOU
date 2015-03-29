@@ -47,4 +47,8 @@ def list_all_file(dir):
 
 
 if __name__ == '__main__':
+    # usage
+    if len(sys.argv) != 3:
+        print 'Usage: python parse_html.py <input dir> <output dir>'
+        sys.exit(-1)
     main(sys.argv)
