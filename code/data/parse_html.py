@@ -19,7 +19,7 @@ def parse_html_file(filename, output_dir):
     sent_list = []
     with open(filename) as f:
         for line in f.readlines():
-            if len(line) == 0:
+            if len(line.strip()) == 0:
                 continue
             if line.startswith('<title>'):
                 tmp = re.sub('<[^>]+>', '', line.strip())
@@ -27,9 +27,8 @@ def parse_html_file(filename, output_dir):
                 print 'title:', title
             elif line.startswith('<p>'):
                 line = re.sub('<[^>]+>', '', line.strip())
-                sent_list.append(line)
-            else:
-                continue
+                if len(line) > 0:
+                    sent_list.append(line)
     if not output_dir.endswith('/'):
         output_dir += '/'
     with open(output_dir + title, 'w') as g:
