@@ -1,4 +1,4 @@
-def read_article(filename, verbose=False):
+def read_article_asking(filename, verbose=False):
     sentences = []
     with open(filename) as f:
         for line in f.readlines():
