@@ -73,6 +73,7 @@ def question_answer(question, text):
 def answer_whq(q_type, q_tree, text):
     s_tree = parser.raw_parse(text)[0]
     print s_tree
+    print nltk.ne_chunk(s_tree.pos())
 
     if q_type == 'WHO':
         pass
