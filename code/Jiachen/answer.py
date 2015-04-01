@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import os, sys
 import math
 import numpy as np
@@ -50,7 +49,6 @@ def main(args):
 
 
 # ---- start of sentence matching functions -------------
-
 def sent_matching(idx): # idx is the question index
     # locate corresponding question feature
     q_feat = ques_feat[idx]
@@ -82,12 +80,9 @@ def get_match_score(s_feat, q_feat):
             q_match[i] += 1.0
 
     # eval the score: normalized by the log of sentence length
-    score = np.sum(q_match) / featdim / math.log(featdim + len(sfeat_set))
+    # length discount function is very tricky ... deprecate it currently
+    score = np.sum(q_match) / featdim# / math.log(featdim + len(sfeat_set))
     return score
-
-
-
-
 # ---- end of sentence matching functions ---------------
 
 
