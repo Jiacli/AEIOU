@@ -43,7 +43,78 @@ def main(args):
         match_idx = sent_matching(idx)
         print ques_text[idx]
         print sent_text[match_idx]
-        print ''
+
+        question_answer(ques_text[idx], sent_text[match_idx])
+        break
+        
+
+
+# ---- start of question answering functions -------------
+def question_answer(question, text):
+    # parse the question first
+    q_tree = parser.raw_parse(question)[0]
+    # q_tree should be the root node
+    assert q_tree.label() == 'ROOT'
+
+    # debug
+    print q_tree
+
+    # obtain the question type Y/N or WH first
+    q_type = get_question_type(q_tree)
+
+    if q_type == 'Y/N':
+        pass
+    elif q_type.startswith('WH'):
+        ans = answer_whq(q_type, q_tree, text)
+
+    print 'ans:', ans, '\n'
+
+
+def answer_whq(q_type, q_tree, text):
+    s_tree = parser.raw_parse(text)[0]
+    print s_tree
+
+    if q_type == 'WHO':
+        pass
+    elif q_type == 'WHEN':
+        pass
+    elif q_type == 'WHERE':
+        pass
+    elif q_type == 'WHAT':
+        pass
+    elif q_type == 'HOW':
+        # not sure whether how should be here
+        pass
+
+
+
+
+
+# question type set
+SBARQ_set = set(['WHPP', 'WHNP', 'WHADJP', 'WHAVP', 'WHADVP'])
+WH_set = set(['WP', 'WDT', 'WP$', 'WRB'])
+#SQ_set = set(['IS', 'WAS', 'AM', 'ARE', 'WERE', 'DO', 'DOES', 'DID'])
+
+def get_question_type(root):
+    label = root[0].label()
+
+    if label == 'SBARQ':
+        # direct question introduced by a wh-word or a wh-phrase.
+        for child in root[0]:
+            if child.label() in SBARQ_set:
+                for (token, tag) in child.pos():
+                    if tag in WH_set:
+                        head = token.encode('UTF-8', 'ignore').upper()
+                        return head
+    elif label == 'SQ':
+        # inverted yes/no question
+        return 'Y/N'
+    else:
+        print 'Unknown clause level type:', label
+        return None
+
+
+# ---- end of question answering functions ---------------
 
 
 
@@ -106,6 +177,8 @@ def preprocess(args):
     # question feature extraction
     with open(questions) as f:
         for line in map(lambda l:l.strip(), f.readlines()):
+            if len(line) == 0:
+                continue
             ques_text.append(line)
 
             # extract question feature (e.g., uni/bi-gram)
@@ -184,7 +257,7 @@ def stemming(tokens):
     tokens_stem = []
     for token in tokens:
         try: # in case of special character
-            tokens_stem.append(stemmer.stem(token).encode('UTF-8'))
+            tokens_stem.append(stemmer.stem(token).encode('UTF-8', 'ignore'))
         except Exception, e:
             continue
     return tokens_stem
