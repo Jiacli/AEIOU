@@ -92,6 +92,10 @@ def answer_whq(q_type, q_tree, text):
     return ans
 
 
+def ans_where(s_tree, q_tree):
+    ans = []
+
+
 DATE_set = set(['January', 'February', 'March', 'April', 'May', 'June',\
     'July', 'August', 'September', 'October', 'November', 'December', 'Jan.',\
     'Feb.', 'Mar.', 'Apr.', 'Jun.', 'Jul.', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.',\
@@ -120,7 +124,8 @@ def ans_when(s_tree, q_tree):
                 s += 2.0
             elif tag == 'CD':
                 s += 1.5
-        s /= len(nodepos)
+            elif token.endswith('th') or token.endswith('st') or token.endswith('nd') or token.endswith('rd'):
+                s += 0.2
         ans.append((node.leaves(), s))
 
     # rank
@@ -267,7 +272,10 @@ def sent_segment(filename):
             if len(line) == 0:
                 continue
             # check invalid line e.g., without any punctuation,
-            sents = sent_detector.tokenize(line)
+            try:
+                sents = sent_detector.tokenize(line)
+            except Exception, e:
+                continue            
             for sent in sents:
                 sentences.append(sent)
     return sentences
