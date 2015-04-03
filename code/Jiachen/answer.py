@@ -73,10 +73,9 @@ def question_answer(question, text):
 def answer_whq(q_type, q_tree, text):
     s_tree = parser.raw_parse(text)[0]
     print s_tree
-    print nltk.ne_chunk(s_tree.pos())
-
+    ans = ''
     if q_type == 'WHO':
-        pass
+        ans = ans_who(s_tree[0], q_tree)
     elif q_type == 'WHEN':
         pass
     elif q_type == 'WHERE':
@@ -86,7 +85,22 @@ def answer_whq(q_type, q_tree, text):
     elif q_type == 'HOW':
         # not sure whether how should be here
         pass
+    return ans
 
+def ans_who(s_tree, q_tree):
+    ans = []
+    for child in s_tree:
+        if not child.label().startswith('N'): # find name in N-label
+            continue
+        nes = nltk.ne_chunk(child.pos())
+        for ne in nes:
+            if type(ne) == nltk.tree.Tree:
+                if ne.label() == 'PERSON':
+                    name = []
+                    for n in ne.leaves():
+                        name.append(n[0])
+                    ans.append(' '.join(name))
+    return ', '.join(ans)
 
 
 
@@ -277,13 +291,15 @@ def func_test(args):
     #        #print tokens
     #        ques_feat_extract(tokens)
 
-    preprocess(args)
+    #preprocess(args)
 
-    print sent_text[0:3]
-    print sent_feat[0:3]
-    print ques_text[0:3]
-    print ques_feat[0:3]
-
+    #print sent_text[0:3]
+    #print sent_feat[0:3]
+    #print ques_text[0:3]
+    #print ques_feat[0:3]
+    s_tree = parser.raw_parse('Tom Watson really loves Ben Cook.')[0]
+    s_tree.draw()
+    sys.exit(-1)
     
 
 
