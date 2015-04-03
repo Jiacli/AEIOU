@@ -57,22 +57,32 @@ def question_answer(question, text):
     assert q_tree.label() == 'ROOT'
 
     # debug
-    print q_tree
+    #print q_tree
 
     # obtain the question type Y/N or WH first
     q_type = get_question_type(q_tree)
 
     if q_type == 'Y/N':
-        pass
+        ans = answer_yorn(q_tree, text)
     elif q_type.startswith('WH'):
         ans = answer_whq(q_type, q_tree, text)
+    else:
+        ans = 'Unknown question->' + q_type
 
-    print 'ans:', ans, '\n'
+    print 'Ans:', ans, '\n'
 
+
+def answer_yorn(q_tree, text):
+    # maybe the most hard part of answering system..
+    # using a probabilitic model to eval
+    
+
+    pass
+    return 'NO'
 
 def answer_whq(q_type, q_tree, text):
     s_tree = parser.raw_parse(text)[0]
-    print s_tree
+    #print s_tree
     ans = ''
     if q_type == 'WHO':
         ans = ans_who(s_tree[0], q_tree)
@@ -111,6 +121,7 @@ def find_treenode_given_tag(root, tag, nodes):
         find_treenode_given_tag(child, tag, nodes)
 
 def ans_when(s_tree, q_tree):
+    q_tokens = set(q_tree.leaves())
     ans = []
     nodes = []
     # find all nodes with PP tag
@@ -126,6 +137,8 @@ def ans_when(s_tree, q_tree):
                 s += 1.5
             elif token.endswith('th') or token.endswith('st') or token.endswith('nd') or token.endswith('rd'):
                 s += 0.2
+            elif token in q_tokens:
+                s -= 0.5
         ans.append((node.leaves(), s))
 
     # rank
