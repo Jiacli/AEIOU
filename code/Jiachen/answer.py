@@ -77,7 +77,7 @@ def answer_whq(q_type, q_tree, text):
     if q_type == 'WHO':
         ans = ans_who(s_tree[0], q_tree)
     elif q_type == 'WHEN':
-        pass
+        ans = ans_when(s_tree[0], q_tree)
     elif q_type == 'WHERE':
         pass
     elif q_type == 'WHAT':
@@ -85,7 +85,50 @@ def answer_whq(q_type, q_tree, text):
     elif q_type == 'HOW':
         # not sure whether how should be here
         pass
+
+    # save me if I cannot find ans
+    if ans == None or len(ans) == 0:
+        ans = text
     return ans
+
+
+DATE_set = set(['January', 'February', 'March', 'April', 'May', 'June',\
+    'July', 'August', 'September', 'October', 'November', 'December', 'Jan.',\
+    'Feb.', 'Mar.', 'Apr.', 'Jun.', 'Jul.', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.',\
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
+
+def find_treenode_given_tag(root, tag, nodes):
+    # the results are stored in the nodes list
+    for child in root:
+        if type(child) != nltk.tree.Tree:
+            continue
+        if child.label() == tag:
+            nodes.append(child)
+        find_treenode_given_tag(child, tag, nodes)
+
+def ans_when(s_tree, q_tree):
+    ans = []
+    nodes = []
+    # find all nodes with PP tag
+    find_treenode_given_tag(s_tree, 'PP', nodes)
+    for node in nodes:
+        nodepos = node.pos()
+        s = 0.0
+        # eval
+        for (token, tag) in nodepos:
+            if token in DATE_set:
+                s += 2.0
+            elif tag == 'CD':
+                s += 1.5
+        s /= len(nodepos)
+        ans.append((node.leaves(), s))
+
+    # rank
+    if len(ans) == 0:
+        return None
+    else:
+        ans = sorted(ans, key=lambda x:x[1], reverse=True)
+        return ' '.join(ans[0][0])
 
 def ans_who(s_tree, q_tree):
     ans = []
@@ -297,7 +340,7 @@ def func_test(args):
     #print sent_feat[0:3]
     #print ques_text[0:3]
     #print ques_feat[0:3]
-    s_tree = parser.raw_parse('Tom Watson really loves Ben Cook.')[0]
+    s_tree = parser.raw_parse('In Feb. 1990s, Tom Watson showed love to Ben Cook.')[0]
     s_tree.draw()
     sys.exit(-1)
     
