@@ -4,6 +4,8 @@ import re
 def main(src, dst):
     f = open(dst, 'w')
     entityDict = dict()
+
+    targetPronoun = ['IT','THIS','THAT','SHE','HE','HIS','HER','ITS','THESE','THOSE']
    
     for line in open(src, 'r'):
         newLine = ""
@@ -23,8 +25,10 @@ def main(src, dst):
             entityContent = line[endTemp + 1: entityContentEnd ]
             if entityId not in entityDict:
                 entityDict[entityId] = entityContent
-            else:
+            elif entityContent.upper() in targetPronoun:
                 entityContent = entityDict[entityId]
+            
+
 
             newLine += entityContent
             newLinePointer = line[entityContentEnd + 1: -1].find(">") + entityContentEnd  + 1 + 1
