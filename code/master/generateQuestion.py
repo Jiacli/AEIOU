@@ -25,23 +25,30 @@ def generateEasyQuestion(originalSentence):
     question = ""
     # in this case we will move the verb to the first and generate new question
     if checkAuxiliary(auxiliarySet, tokens):
+        findAuxiliary = False
         for index in xrange(len(tokens)):
             word = tokens[index]
+           
             # if we find the auxilliary verb , move it to the front of the sentence
-            if word in auxiliarySet:
+            if word in auxiliarySet :
                 for subSentence in originalSentence.split(","):
-                    if word not in subSentence:
+                    if word not in subSentence :
                         question += subSentence
-                    else:
+                        
+                    elif not findAuxiliary:
                         newSubSentence = ""
                         for token in nltk.word_tokenize(subSentence):
                             if token == '.':
                                 break
-                            elif token != word:
+                            elif token != word or findAuxiliary:
                                 newSubSentence += token + " "
-                            else:
+                            elif not findAuxiliary:
                                 newSubSentence = token + " " + newSubSentence
+                                findAuxiliary = True
                         question += newSubSentence[0:-1]
+                        
+                    
+
                     question += ", "  
                 break
     else:   
