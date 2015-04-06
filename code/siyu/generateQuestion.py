@@ -20,7 +20,7 @@ def generateEasyQuestion(originalSentence):
     stemmer = SnowballStemmer("english")
     originalSentence = originalSentence[0].lower() + originalSentence[1:]
     tokens = nltk.word_tokenize(originalSentence)
-    auxiliarySet = set(['is','are','was','were','did','does','did','must','may','can','could','should','will','would'])
+    auxiliarySet = set(['is','are','was','were','did','does','did','must','may','can','could','should','will','would','has','have'])
     verbSet = set(['VB','VBD','VBG','VBP','VBZ'])
     question = ""
     # in this case we will move the verb to the first and generate new question
