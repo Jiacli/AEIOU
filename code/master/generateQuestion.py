@@ -9,6 +9,7 @@ path = '../../../jars/'
 os.environ['STANFORD_PARSER'] = path
 os.environ['STANFORD_MODELS'] = path
 parser = stanford.StanfordParser(model_path=path+"englishPCFG.ser.gz")
+stemmer = SnowballStemmer("english", ignore_stopwords=True)
 
 def checkAuxiliary(auxSet, tokens):
     for token in tokens:
@@ -150,6 +151,83 @@ def generateWhoAndWhat(sents, verbose=True):
         else:
             return ''
 
+DATE_set = set(['January', 'February', 'March', 'April', 'May', 'June',\
+    'July', 'August', 'September', 'October', 'November', 'December', 'Jan.',\
+    'Feb.', 'Mar.', 'Apr.', 'Jun.', 'Jul.', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.',\
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
+
+BE_set = set(['is', 'am', 'are', 'was', 'were'])
+def generateWhen(sents, verbose=False):
+    ques = ''
+    s_tree = parser.raw_parse(sents)[0]
+    print s_tree
+    nodes = []
+    q = []
+    # find all nodes with PP tag
+    find_treenode_given_tag(s_tree, 'PP', nodes)
+    for node in nodes:
+        nodepos = node.pos()
+        s = 0.0
+        # eval
+        for (token, tag) in nodepos:
+            if token in DATE_set:
+                s += 2.0
+            elif tag == 'CD':
+                s += 1.5
+            elif token.endswith('th') or token.endswith('st') or token.endswith('nd') or token.endswith('rd'):
+                s += 0.2
+        q.append((node.leaves(), s))
+
+    # check whether can form any question
+    if len(q) > 0:
+        q = sorted(q, key=lambda x:x[1], reverse=True)
+        print q
+        if q[0][1] > 3.0:
+            q_token = q[0][0]
+            # now come up with the question
+            s_pos = s_tree.pos()
+            for idx in xrange(len(s_pos)):
+                if q_token[0] == s_pos[idx][0]:
+                    index = idx
+                    for j in xrange(1, len(q_token)):
+                        if q_token[j] != s_pos[idx+j][0]:
+                            index = -1
+                            break
+                    if index > 0:
+                        break
+            sent = []
+            done = False
+            if index != 0:
+                for idx in xrange(index):
+                    token = s_pos[idx][0]
+                    tag = s_pos[idx][1]
+                    if idx == 0:
+                        token = token.lower()
+                    if tag.startswith('VB') and not done:
+                        done = True                        
+                        token = token.lower()
+                        if token in BE_set:
+                            ques = 'When ' + token + ' '
+                        else:
+                            ques = 'When did '
+                            sent.append(stemmer.stem(token))
+                    else:
+                        sent.append(token)
+            ques += ' '.join(sent) + '?'
+    print ques
+
+    return ques 
+
+def find_treenode_given_tag(root, tag, nodes):
+    # the results are stored in the nodes list
+    for child in root:
+        if type(child) != nltk.tree.Tree:
+            continue
+        if child.label() == tag:
+            nodes.append(child)
+        find_treenode_given_tag(child, tag, nodes)
+
+
 def dfs(sentences, level, begin, main_component):
     ques = ''
     index = 0
@@ -182,3 +260,9 @@ def dfs(sentences, level, begin, main_component):
             ques += ' '+child
         index += 1
     return [ques, False]
+
+
+if __name__ == '__main__':
+    # used for function test
+    #generateWhen('I left Beijing and moved to Pittsburgh in July 21st, 2014.', True)
+
