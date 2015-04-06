@@ -4,6 +4,7 @@ from nltk.parse import stanford
 from nltk.stem.snowball import SnowballStemmer
 import nltk
 from nltk.tree import Tree
+from nltk.stem.wordnet import WordNetLemmatizer
 
 path = '../../../jars/'
 os.environ['STANFORD_PARSER'] = path
@@ -201,20 +202,22 @@ def generateWhen(sents, verbose=False):
                 for idx in xrange(index):
                     token = s_pos[idx][0]
                     tag = s_pos[idx][1]
-                    if idx == 0:
+                    if idx == 0 and token != 'I':
                         token = token.lower()
-                    if tag.startswith('VB') and not done:
+                    if tag.startswith('VB'):
+                        if done:
+                            sent.append(WordNetLemmatizer().lemmatize(token, 'v'))
+                            continue
                         done = True                        
                         token = token.lower()
                         if token in BE_set:
                             ques = 'When ' + token + ' '
                         else:
                             ques = 'When did '
-                            sent.append(stemmer.stem(token))
+                            sent.append(WordNetLemmatizer().lemmatize(token, 'v'))
                     else:
                         sent.append(token)
-            ques += ' '.join(sent) + '?'
-    print ques
+                ques += ' '.join(sent) + '?'
 
     return ques 
 
@@ -264,5 +267,5 @@ def dfs(sentences, level, begin, main_component):
 
 if __name__ == '__main__':
     # used for function test
-    #generateWhen('I left Beijing and moved to Pittsburgh in July 21st, 2014.', True)
-
+    #generateWhen('Dyer released his new homework on first Sunday of 2016.', True)
+    pass
