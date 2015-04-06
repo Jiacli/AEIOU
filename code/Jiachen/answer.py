@@ -36,8 +36,9 @@ def main(args):
         print idx, '.', ques_text[idx]
         print sent_text[match_idx]
 
-        question_answer(ques_text[idx], sent_text[match_idx])
+        ans = question_answer(ques_text[idx], sent_text[match_idx])
         
+        print 'Ans:', ans, '\n'
         
 
 
@@ -59,13 +60,13 @@ def question_answer(question, text):
     else:
         ans = 'Unknown question->' + q_type
 
-    print 'Ans:', ans, '\n'
+    return ans
 
 def answer_yorn(q_tree, text):
     try:
         s_tree = parser.raw_parse(text)[0]
     except Exception, e:
-        return  'NO'
+        return  'YES'
     # maybe the most hard part of answering system..
     # using a probabilitic model to eval
     
@@ -253,7 +254,7 @@ def sent_matching(idx): # idx is the question index
         match_list.append((score, j))
 
     match_list = sorted(match_list, key=lambda x:x[0], reverse=True)
-    print match_list[0:5]
+    #print match_list[0:5]
 
     if len(match_list) > 0:
         return match_list[0][1]
