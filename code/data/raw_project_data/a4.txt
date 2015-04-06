@@ -1,0 +1,9 @@
+No: Perl is not officially an acronym.
+Yes: December 18, 2007, the 20th anniversary of Perl 1.0
+Yes: Perl is an interpreted language
+'Practical Extraction and Reporting Language': there are various backronyms in use, the most well-known being 'Practical Extraction and Reporting Language'
+The community that surrounds Perl: The community that surrounds Perl was, in fact, the topic of Wall's first 'State of the Onion' talk.
+For modules that are fun in nature: The Perl community has set aside the 'Acme' namespace for modules that are fun in nature (but its scope has widened to include exploratory or experimental code or any other module that is not meant to ever be used in production).
+Wall discovered the existing PEARL programming language before Perl's official release and changed the spelling of the name.
+Programming Perl: Programming Perl, published by O'Reilly Media, features a picture of a dromedary camel on the cover and is commonly called the 'Camel Book'. This image of a camel has become an unofficial symbol of Perl as well as a general hacker emblem, appearing on T-shirts and other clothing items.
+The combination of being used as a glue language and for 'data munging': Perl is often used as a glue language, tying together systems and interfaces that were not specifically designed to interoperate, and for 'data munging', that is, converting or processing large amounts of data for tasks such as creating reports. The combination makes Perl a popular all-purpose language for system administrators

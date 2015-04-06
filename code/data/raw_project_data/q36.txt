@@ -1,0 +1,45 @@
+Are most of CPython's alternative implementations free and open-source?
+Do Python developers use spam and eggs in tutorials and reference materials?
+Who chose Python as a working title for the project?
+What are some languages that Python expressions are similar to?
+What are some programming paradigms that Python supports?
+When was Python conceived?
+Are Python interpreters available for many different operating systems?
+Was Python implemented in 1975?
+Does Python support multiple programming paradigms?
+Can python code be packaged into stand-alone executable programs?
+Does python provide a round function for rounding floats to integers?
+Is the standard library essential to run Python?
+When was Python conceived?
+Who started Python's implementation?
+What is the primary mechanism for proposing major new features?
+How are blocks of code delimited in Python?
+What does Python use for garbage collection?
+How are modules imported?
+Does Python use whitespace indentation?
+Does Python make a distinction between lists and tuples?
+Does Python support tail-call optimization?
+How large is Python's standard library?
+What are users and admirers of Python called?
+Where is Python's name derived from?
+What kind of boolean expressions does Python allow?
+Will Python ever support tail-call optimization or first-class continuations?
+To what degree has Python been used in the information security industry?
+Is python a high-level programming language?
+When was python conceived?
+Does python use dynamic typing?
+To what extent does python support functional programming capabilities?
+What is the newest version of Python?
+What languages is Python similar to?
+What was the significance of Van Rossum's frustrations?
+What is the general philosophy of python?
+What do 'spam' and 'eggs' represent?
+Does Python support multiple programming paradigms?
+Was Python 3.0 released on 16 October 2000?
+Does python have index and slice expressions on lists?
+What is Python?
+What document summarizes the core philosophy of the language?
+What is the main Python implementatio named?
+Does Python support the functional programming paradigm?
+How are type constraints checked?
+What advantage does PyPy have over CPython?
