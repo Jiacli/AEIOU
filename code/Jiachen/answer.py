@@ -33,7 +33,7 @@ def main(args):
     # loop over all questions in the main function
     for idx in xrange(len(ques_text)):
         match_idx = sent_matching(idx)
-        print ques_text[idx]
+        print idx, '.', ques_text[idx]
         print sent_text[match_idx]
 
         question_answer(ques_text[idx], sent_text[match_idx])
@@ -48,9 +48,6 @@ def question_answer(question, text):
     # q_tree should be the root node
     assert q_tree.label() == 'ROOT'
 
-    # debug
-    #print q_tree
-
     # obtain the question type Y/N or WH first
     q_type = get_question_type(q_tree)
     if q_type == None:
@@ -64,20 +61,67 @@ def question_answer(question, text):
 
     print 'Ans:', ans, '\n'
 
-
 def answer_yorn(q_tree, text):
+    try:
+        s_tree = parser.raw_parse(text)[0]
+    except Exception, e:
+        return  'NO'
     # maybe the most hard part of answering system..
     # using a probabilitic model to eval
-    q_tokens = q_tree.leaves()
-    q_tags = [0] * len(q_tokens)
+    
+    q_tokens = stemming(q_tree.leaves())
+    q_len = len(q_tokens)
+    q_tags = [0] * q_len
     t_tokens = nltk.word_tokenize(text)
 
-    
+    t_tokens_set = set(stemming(t_tokens))
+    for idx in xrange(q_len):
+        if q_tokens[idx] in t_tokens_set:
+            q_tags[idx] = 1
 
+    # overlap score
+    overlap_s = float(np.sum(q_tags)) / q_len
 
+    # mismatch score
+    mismatch_s = 0
+    for idx in xrange(1, q_len-1):
+        if q_tags[idx] > 0:
+            continue
+        if q_tags[idx-1] > 0 and q_tags[idx+1] > 0:
+            mismatch_s += 1
+            # check what is missing?
+            status = word_seq_matching(s_tree, q_tree, idx)
+            print 'have status check at:',idx, ' ', status
+            if status == 'N':
+                return 'NO'
+            else:
+                mismatch_s -= 1
 
-    pass
+    if overlap_s > 0.7:
+        return 'YES'
+
+    print 'return default result NO'
     return 'NO'
+
+def word_seq_matching(s_tree, q_tree, index):
+    t_pos = s_tree.pos()
+    q_pos = q_tree.pos()
+    lastw = q_pos[index-1][0]
+    nextw = q_pos[index+1][0]
+
+    for idx in xrange(1, len(t_pos)-1):
+        if t_pos[idx-1][0] == lastw and t_pos[idx+1][0] == nextw:
+            q_w = stemmer.stem(q_pos[index][0]).encode('UTF-8', 'ignore')
+            t_w = stemmer.stem(t_pos[idx][0]).encode('UTF-8', 'ignore')
+            if q_w == t_w:
+                return 'Y'
+            q_tag = q_pos[index][1]
+            t_tag = t_pos[idx][1]
+            if q_tag[0] != t_tag[0]:
+                return 'Y'
+            else:
+                return 'N'
+    return None
 
 def answer_whq(q_type, q_tree, text):
     try:
@@ -190,7 +234,6 @@ def get_question_type(root):
     else:
         print 'Invalid question -> tag:', label
         return None
-
 
 # ---- end of question answering functions ---------------
 
