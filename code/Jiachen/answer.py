@@ -16,14 +16,6 @@ parser = stanford.StanfordParser(model_path=MODEL_PATH)
 stemmer = SnowballStemmer("english", ignore_stopwords=True)
 
 
-#sentences = parser.raw_parse("NLP is a great course, we all love it.")
-#print sentences
-#print sentences[0].pos()
-# GUI
-#for sentence in sentences:
-#    sentence.draw()
-
-
 # global params
 sent_text = []
 sent_feat = []
@@ -45,7 +37,7 @@ def main(args):
         print sent_text[match_idx]
 
         question_answer(ques_text[idx], sent_text[match_idx])
-        break
+        
         
 
 
@@ -61,10 +53,11 @@ def question_answer(question, text):
 
     # obtain the question type Y/N or WH first
     q_type = get_question_type(q_tree)
-
-    if q_type == 'Y/N':
+    if q_type == None:
+        ans = text
+    elif q_type == 'Y/N':
         ans = answer_yorn(q_tree, text)
-    elif q_type.startswith('WH'):
+    elif q_type.startswith('WH') or q_type.startswith('HO'):
         ans = answer_whq(q_type, q_tree, text)
     else:
         ans = 'Unknown question->' + q_type
@@ -75,15 +68,25 @@ def question_answer(question, text):
 def answer_yorn(q_tree, text):
     # maybe the most hard part of answering system..
     # using a probabilitic model to eval
+    q_tokens = q_tree.leaves()
+    q_tags = [0] * len(q_tokens)
+    t_tokens = nltk.word_tokenize(text)
+
     
+
+
 
     pass
     return 'NO'
 
 def answer_whq(q_type, q_tree, text):
-    s_tree = parser.raw_parse(text)[0]
+    try:
+        s_tree = parser.raw_parse(text)[0]
+    except Exception, e:
+        return  text
+    
     #print s_tree
-    ans = ''
+    ans = None
     if q_type == 'WHO':
         ans = ans_who(s_tree[0], q_tree)
     elif q_type == 'WHEN':
@@ -165,7 +168,6 @@ def ans_who(s_tree, q_tree):
 
 
 
-
 # question type set
 SBARQ_set = set(['WHPP', 'WHNP', 'WHADJP', 'WHAVP', 'WHADVP'])
 WH_set = set(['WP', 'WDT', 'WP$', 'WRB'])
@@ -186,7 +188,7 @@ def get_question_type(root):
         # inverted yes/no question
         return 'Y/N'
     else:
-        print 'Unknown clause level type:', label
+        print 'Invalid question -> tag:', label
         return None
 
 
@@ -233,7 +235,7 @@ def get_match_score(s_feat, q_feat):
 # ---- end of sentence matching functions ---------------
 
 
-
+PUNC_set = set([',', '.', '?', ':', '!', ';', "'"])
 # ---- start of pre-processing functions ----------------
 def preprocess(args):
 
@@ -243,6 +245,9 @@ def preprocess(args):
     # sentence segmentation
     sentences = sent_segment(article)
     for sent in sentences:
+        if len(sent) == 0 or sent[-1] not in PUNC_set:
+            continue
+
         sent_text.append(sent)
         tokens = nltk.word_tokenize(sent)
         tokens = stemming(tokens)

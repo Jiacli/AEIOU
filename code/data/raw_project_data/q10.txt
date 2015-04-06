@@ -1,0 +1,81 @@
+What is the conventional name for the array of String objects that Java's main method accepts?
+In what project does Google use Java?
+Is James Gosling still working at Sun Microsystems?
+As of 2015, how many developers use Java?
+Who initiated the Java language project in 1991?
+When did Sun Microsystems release Java as free and open-source software?
+Is portability a design goal of Java?
+Is Java object-oriented?
+Is the standard Java library the Java Class Library?
+Is Java a functional computer programming language?
+Is Java one of the most popular programming languages in use?
+Are Java applications typically compiled to bytecode?
+When did Sun Microsystems approach the ISO/IEC JTC 1 standards body?
+When did James Gosling resign from Oracle?
+When did Hotspot become the default for Sun's JVM?
+When was the Java project first created?
+Where did Java derive most of its syntax from?
+What was Java originally called?
+Is Swing a graphical user interface library for the Java SE platform?
+Is porting a major benefit of using bytecode?
+Is Google the current owner of the official implementation of the Java SE platform?
+How many primary goals were there in the creation of the Java language?
+Who initiated the Java language project in June 1991?
+When can garbage collection happen?
+Is HotSpot an implementation of the JVM?
+What does FOSS stand for?
+Do programs written in Java require less memory than those written in C++?
+Is Java suitable for the digital cable television in 1991?
+Did James Gosling resign ?
+Is Java slower than C ++ ?
+When was the first public implementation as Java 1.0 released?
+Who said that Suns ideal role with regard to Java was an 'evangelist'?
+When will garbage collection happen?
+Is syntax of Java the same as that in C++?
+Why is Java platform dependent?
+Is primitive data type integer an object?
+Did James Gosling initiate Java in 1991?
+Is Java the most popular programming language?
+Was Java initially called Oak?
+When was the first public implementation of Java released?
+How does Java mange memory in the object lifecycle?
+From which language did Java derive its syntax?
+What intermediate step allows Java to run any operating system?
+What kind of memory gets freed by the garbage collector?
+What is java's suffix for its source code file?
+Is Java a functional programming language?
+Does Java derive a lot of its syntax from C++?
+Does Java use a garbage collector?
+What was Java originally designed for?
+What was Java initially called?
+When was the Java language project initiated?
+Does C++ use more memory than Java?
+Does Java's garbage collecting allow for explicit memory management?
+How do Java users gain access to graphics?
+Does Java use an automatic garbage collector?
+Is Java an object-oriented language?
+Is the syntax of Java derived from Lisp?
+When was the Java language project initiated?
+Who is the current owner of the Java SE platform?
+What is the comprehensive Java documentation system?
+Are Java programs more efficient than C++ programs?
+What was the original name for the Java language? 
+Was the first implementation of Java released before the year 2000?
+Is java a functional programming language?
+Does Java support C/C++ style pointer arithmetic?
+Can static methods be invoked without a reference to an object?
+Does C++ support operator overloading?
+How many Java Runtime Environment downloads are there each year?
+Is Java SE6 released on December 11, 2006?
+Do Java core libraroes include security?
+When will a 'null pointer exception' been thrown ?
+Is Java Runtime Environment intended for software developers and end users?
+Is portability a design goal of Java?
+Is Microsoft the current owner of the official implementation of the Java SE platform?
+Are generics server-side Java EE components?
+What is a major benefit of using bytecode?
+What option allows ARM based processors to have hardware support for executing Java bytecode?
+Who defines and supports four editions of Java?
+What major release was in 2011?
+What will occur ideally when a program is idle?
+Who defines and supports Java Card for smartcards?

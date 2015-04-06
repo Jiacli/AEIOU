@@ -1,0 +1,27 @@
+yes
+yes
+Van Rossum
+C and Java
+object-oriented, imperative and functional programming
+late 1980s
+yes
+no
+yes
+Yes
+Yes
+No
+In the late 1980s
+Guido van Rossum 
+The PEP process
+whitespace indentation
+a combination of reference counting and a cycle-detecting
+The import statement,
+Yes
+Yes
+No
+54,000 packages
+Pythonists
+Monty Python
+and,or,not
+no
+extensively

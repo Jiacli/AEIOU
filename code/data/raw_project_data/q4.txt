@@ -1,0 +1,9 @@
+Is Perl an acronym?
+Did the 20th anniversary of Perl 1.0 occur on December 20, 2007?
+Is Perl an interpreted language?
+What is the most well known backronym for Perl?
+What was the topic of Larry Wall's first 'State of the Onion' talk?
+What are the 'Acme' namespace used for?
+Why did Larry Wall change the name from 'Pearl' to Perl?
+What made a camel an unofficial symbol of Perl?
+What combination makes Perl a popular all-purpose language for system administrators?

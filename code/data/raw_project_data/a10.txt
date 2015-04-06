@@ -1,0 +1,71 @@
+args
+Android SDK
+No
+9 million
+James Gosling, Mike Sheridan, and Patrick Naughton
+November 13, 2006
+Yes
+Yes
+Yes
+Yes
+Yes
+No
+Five
+James Gosling, Mike Sheridan, and Patrick Naughton
+Garbage collection may happen at any time.
+Yes.
+Free and open-source software
+No.
+no
+yes
+Yes
+1995
+Sun's vice-president Rich Green
+any time
+No
+no
+Yes
+Yes
+Yes
+1995
+Java uses an automatic garbage collector
+C++
+Java bytecode
+Unreachable memory
+.java
+yes
+yes
+yes
+Java was originally designed for interactive television
+Oak
+June 1991
+No
+No
+Standardized libraries
+Yes.
+Yes
+No
+June 1991
+Oracle Corporation.
+Javadoc
+No
+Oak
+Yes
+no
+no
+yes
+yes
+930 million
+yes
+yes
+If methods for a nonexistent object are called
+no
+Yes
+No
+No
+porting
+Jazelle
+Sun
+Java SE 7
+garbage collection
+Sun
