@@ -1,3 +1,8 @@
+import os
+import ask
+import string
+
+
 def read_article_asking(filename, verbose=False):
     sentences = []
     with open(filename) as f:
@@ -13,8 +18,8 @@ def read_article_asking(filename, verbose=False):
             for str in sents:
                 s = str.strip()
                 # validation rules
-                if len(s) > valid_sents_length_lo \
-                    and len(s) < valid_sents_length_hi \
+                if len(s) > ask.valid_sents_length_lo \
+                    and len(s) < ask.valid_sents_length_hi \
                     and (s[0] in string.ascii_uppercase):
                     sentences.append(s)
     # debug
