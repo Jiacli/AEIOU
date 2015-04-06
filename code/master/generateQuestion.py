@@ -20,7 +20,7 @@ def generateEasyQuestion(originalSentence):
     stemmer = SnowballStemmer("english")
     originalSentence = originalSentence[0].lower() + originalSentence[1:]
     tokens = nltk.word_tokenize(originalSentence)
-    auxiliarySet = set(['is','are','was','were','did','does','did','must','may','can','could','should','will','would'])
+    auxiliarySet = set(['is','are','was','were','did','does','did','must','may','can','could','should','will','would','has','have'])
     verbSet = set(['VB','VBD','VBG','VBP','VBZ'])
     question = ""
     # in this case we will move the verb to the first and generate new question
@@ -80,24 +80,70 @@ def generateEasyQuestion(originalSentence):
         rst = question
     return rst
 
-def generateWho(sents):
+#-- generate questions based on four basic rules.
+# 1. It is assumed that subject appears at the begining of sentences.
+# 2. PP which appears at the begining of sentences will be deleted.
+# 3. SBAR and ADTP which appears at the end will be deleted.
+# 4. When scaning parse tree which contains comma, all words after
+# comma will be deleted if NP, VP, NP have already all appear before.
+
+def checkPersonName(root, verbose=True):
+    is_person = True
+    nes = nltk.ne_chunk(root.pos())
+    if verbose:
+        print nes
+    for ne in nes:
+        if type(ne) == nltk.tree.Tree:
+            if ne.label() != 'PERSON':
+                is_person = False
+        else:
+            is_person = False
+
+    return is_person
+
+def generateWhoAndWhat(sents, verbose=True):
         ques = ''
         sentences = parser.raw_parse(sents)
+        # stack indicates main component: NP, VP, NP
+        stack = ['NP', 'V']
+        is_who = False
+        is_what = False
+
         root = sentences[0][0]
+        if verbose:
+            print root
+            # f.write(str(root)+'\n')
+
+        # drop PP subsentence
         if root[0].label() == 'PP' and root[1].label() == ',':
             if root[2].label() == 'NP':
-                ques = dfs(root, 0, 3)
+                if checkPersonName(root[0], verbose):
+                    is_who = True
+                else:
+                    is_what = True
+
+                [ques, flag] = dfs(root, 0, 3, stack)
         elif root[0].label() == 'NP':
-                ques = dfs(root, 0, 1)
+            if checkPersonName(root[0], verbose):
+                is_who = True
+            else:
+                is_what = True
+            
+            [ques, flag] = dfs(root, 0, 1, stack)
         else:
             return ques
 
-        quesWho = 'Who'+ques+'?'
-        #quesWhat = 'What'+ques
-        return quesWho
+        # generate questions which are not null
+        if ques != '':
+            if is_who:
+                ques = 'Who'+ques+'?'
+            else:
+                ques = 'What'+ques+'?'
+            return ques
+        else:
+            return ''
 
-
-def dfs(sentences, level, begin):
+def dfs(sentences, level, begin, main_component):
     ques = ''
     index = 0
     for child in sentences:
@@ -105,8 +151,27 @@ def dfs(sentences, level, begin):
             index += 1
             continue           
         elif isinstance(child, Tree):
-            ques += dfs(child, level+1, 0)
+            # drop SBAR subsentence
+            if child.label() == 'SBAR' and len(main_component) == 0:
+                continue
+
+            # if comma appears when main components all appear, ignore others
+            if len(main_component) == 0 and child.label() == ',':
+                return [ques, True]
+
+            [temp, flag] = dfs(child, level+1, 0, main_component)
+            ques += temp
+            # ignore subsentece after comma
+            if flag:
+                return [ques, True]
+
+            if len(main_component) != 0 and \
+                child.label().startswith(main_component[len(main_component)-1]):
+                #print child.label()
+                main_component.pop()
+
         else:
+            # print child
             ques += ' '+child
         index += 1
-    return ques
+    return [ques, False]
