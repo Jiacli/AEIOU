@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
-import sys
-import os
+import sys, os
 import re
 import string
 import generateQuestion
-import preprocess
 import evaluation
 import operator
+import nltk.data
 
 # gloabl control variables
 verbose = False
@@ -21,7 +20,7 @@ def main(args):
     # parse the html file and return the raw text filename
     filename = parse_html_file(args[1])
 
-    sentences = preprocess.sent_segment(filename)
+    sentences = sent_segment(filename)
     questions = ask(sentences, args[2])
 
     # clean up the temp raw text file
@@ -104,6 +103,38 @@ def ask(sentences, number):
 # article reading control parameters    
 valid_sents_length_lo = 50
 valid_sents_length_hi = 250
+
+
+# preprocess function - sentence parser
+SENT_DETECTOR = 'tokenizers/punkt/english.pickle'
+def sent_segment(filename, verbose=False):
+    # configure nltk package
+    sent_detector = nltk.data.load(SENT_DETECTOR)
+
+    sentences = []
+    with open(filename) as f:
+        for line in map(lambda x:x.strip(), f.readlines()):
+            # for empty lines
+            if len(line) == 0:
+                continue
+            # check invalid line e.g., without any punctuation,
+            try:
+                sents = sent_detector.tokenize(line)
+            except Exception, e:
+                continue            
+            for sent in sents:
+                sent = re.sub('\([^\)]+\)', '', sent)
+                if len(sent) > ask.valid_sents_length_lo \
+                    and len(sent) < ask.valid_sents_length_hi \
+                    and (sent[0] in string.ascii_uppercase):
+                    sentences.append(sent)
+    # debug
+    if verbose:
+        i = 0
+        for sent in sentences:
+            print i, sent
+            i += 1
+    return sentences
 
 
 if __name__ == '__main__':
