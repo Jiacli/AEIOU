@@ -9,9 +9,10 @@ from nltk.stem.snowball import SnowballStemmer
 import nltk.data
 
 # configuration for the stanford parser
-os.environ['STANFORD_PARSER'] = '../'
-os.environ['STANFORD_MODELS'] = '../'
-MODEL_PATH = '../englishPCFG.ser.gz'
+dependency_path = './dependency/'
+os.environ['STANFORD_PARSER'] = dependency_path
+os.environ['STANFORD_MODELS'] = dependency_path
+MODEL_PATH = dependency_path + 'englishPCFG.ser.gz'
 parser = stanford.StanfordParser(model_path=MODEL_PATH)
 stemmer = SnowballStemmer("english", ignore_stopwords=True)
 
@@ -33,19 +34,19 @@ def main(args):
     # loop over all questions in the main function
     for idx in xrange(len(ques_text)):
         match_idx = sent_matching(idx)
-        print idx, '.', ques_text[idx]
-        print sent_text[match_idx]
+        #print idx, '.', ques_text[idx]
+        #print sent_text[match_idx]
 
         ans = question_answer(ques_text[idx], sent_text[match_idx])
         
-        print 'Ans:', ans, '\n'
+        print ans
         
 
 
 # ---- start of question answering functions -------------
 def question_answer(question, text):
     # parse the question first
-    q_tree = parser.raw_parse(question)[0]
+    q_tree = list(parser.raw_parse(question))[0]
     # q_tree should be the root node
     assert q_tree.label() == 'ROOT'
 
@@ -64,7 +65,7 @@ def question_answer(question, text):
 
 def answer_yorn(q_tree, text):
     try:
-        s_tree = parser.raw_parse(text)[0]
+        s_tree = list(parser.raw_parse(text))[0]
     except Exception, e:
         return  'YES'
     # maybe the most hard part of answering system..
@@ -92,7 +93,7 @@ def answer_yorn(q_tree, text):
             mismatch_s += 1
             # check what is missing?
             status = word_seq_matching(s_tree, q_tree, idx)
-            print 'have status check at:',idx, ' ', status
+            #print 'have status check at:',idx, ' ', status
             if status == 'N':
                 return 'NO'
             else:
@@ -101,7 +102,7 @@ def answer_yorn(q_tree, text):
     if overlap_s > 0.7:
         return 'YES'
 
-    print 'return default result NO'
+    #print 'return default result NO'
     return 'NO'
 
 def word_seq_matching(s_tree, q_tree, index):
@@ -126,7 +127,7 @@ def word_seq_matching(s_tree, q_tree, index):
 
 def answer_whq(q_type, q_tree, text):
     try:
-        s_tree = parser.raw_parse(text)[0]
+        s_tree = list(parser.raw_parse(text))[0]
     except Exception, e:
         return  text
     
@@ -229,7 +230,7 @@ def get_question_type(root):
         # inverted yes/no question
         return 'Y/N'
     else:
-        print 'Invalid question -> tag:', label
+        #print 'Invalid question:', ' '.join(root[0].leaves())
         return None
 
 # ---- end of question answering functions ---------------
