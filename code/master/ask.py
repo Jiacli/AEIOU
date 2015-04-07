@@ -10,9 +10,7 @@ import evaluation
 import operator
 
 # gloabl control variables
-verbose = True
-# os.environ['STANFORD_PARSER'] = '/Users/sirrie/Desktop/11611/project/jars'
-# os.environ['STANFORD_MODELS'] = '/Users/sirrie/Desktop/11611/project/jars'
+verbose = False
 
 # main routine
 def main(args):
@@ -23,14 +21,13 @@ def main(args):
     # parse the html file and return the raw text filename
     filename = parse_html_file(args[1])
 
-    sentences = preprocess.read_article_asking(filename)
+    sentences = preprocess.sent_segment(filename)
     questions = ask(sentences, args[2])
 
     # clean up the temp raw text file
     os.system('rm ' + filename)
     
 def parse_html_file(filename):
-    title = ''
     sent_list = []
     with open(filename) as f:
         for line in f.readlines():
@@ -39,12 +36,11 @@ def parse_html_file(filename):
             if line.startswith('<title>'):
                 tmp = re.sub('<[^>]+>', '', line.strip())
                 title = re.sub(r'\s+', '_', tmp)
-                print 'title:', title
             elif line.startswith('<p>'):
                 line = re.sub('<[^>]+>', '', line.strip())
                 if len(line) > 0:
                     sent_list.append(line)
-    newfilename = filename + '.txt'
+    newfilename = 'tmp_raw_text'
     with open(newfilename, 'w') as g:
         for line in sent_list:
             g.write(line + '\n')
@@ -108,8 +104,6 @@ def ask(sentences, number):
 # article reading control parameters    
 valid_sents_length_lo = 50
 valid_sents_length_hi = 250
-
-
 
 
 if __name__ == '__main__':
