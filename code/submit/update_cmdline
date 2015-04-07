@@ -1,0 +1,6 @@
+update cmdline
+
+
+Jiachen:
+scp ~/Documents/GitHub/AEIOU/code/submit/ask jiachenl@ghc30.ghc.andrew.cmu.edu:/afs/andrew.cmu.edu/usr4/xiaoqiuh/python_411
+scp ~/Documents/GitHub/AEIOU/code/submit/answer jiachenl@ghc30.ghc.andrew.cmu.edu:/afs/andrew.cmu.edu/usr4/xiaoqiuh/python_411
