@@ -19,9 +19,36 @@ def main(args):
     # read article, return a list of valid sentences with 
     # certain length (50<length<300) and upper-case letter
     # starting.
-    sentences = preprocess.read_article_asking(args[1])
+
+    # parse the html file and return the raw text filename
+    filename = parse_html_file(args[1])
+
+    sentences = preprocess.read_article_asking(filename)
     questions = ask(sentences, args[2])
+
+    # clean up the temp raw text file
+    os.system('rm ' + filename)
     
+def parse_html_file(filename):
+    title = ''
+    sent_list = []
+    with open(filename) as f:
+        for line in f.readlines():
+            if len(line.strip()) == 0:
+                continue
+            if line.startswith('<title>'):
+                tmp = re.sub('<[^>]+>', '', line.strip())
+                title = re.sub(r'\s+', '_', tmp)
+                print 'title:', title
+            elif line.startswith('<p>'):
+                line = re.sub('<[^>]+>', '', line.strip())
+                if len(line) > 0:
+                    sent_list.append(line)
+    newfilename = filename + '.txt'
+    with open(newfilename, 'w') as g:
+        for line in sent_list:
+            g.write(line + '\n')
+    return newfilename
 
 def ask(sentences, number):
     # generate questions based on valid sentence list
@@ -80,7 +107,7 @@ def ask(sentences, number):
     
 # article reading control parameters    
 valid_sents_length_lo = 50
-valid_sents_length_hi = 300
+valid_sents_length_hi = 250
 
 
 
