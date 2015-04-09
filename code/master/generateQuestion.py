@@ -51,7 +51,7 @@ def generateEasyQuestion(originalSentence):
                         
                     
 
-                    question += ", "  
+                    question += ","  
                 break
     else:   
     # in this case we will keep the verb at the place it is, change it into its original form and add auxiliary verb
@@ -80,7 +80,7 @@ def generateEasyQuestion(originalSentence):
                 else:
                     newSubSentence = subSentence
                     break
-            question += newSubSentence + ", "
+            question += newSubSentence + ","
 
     if len(question) > 0:
         question = question.rstrip('.,?! ')
@@ -110,7 +110,7 @@ def checkPersonName(root, verbose=True):
 
     return is_person
 
-def generateWhoAndWhat(sents, verbose=True):
+def generateWhoAndWhat(sents, verbose=False):
         ques = ''
         sentences = parser.raw_parse(sents)
         # stack indicates main component: NP, VP, NP
@@ -118,7 +118,7 @@ def generateWhoAndWhat(sents, verbose=True):
         is_who = False
         is_what = False
 
-        root = sentences[0][0]
+        root = list(sentences)[0][0]
         if verbose:
             print root
             # f.write(str(root)+'\n')
@@ -160,8 +160,9 @@ DATE_set = set(['January', 'February', 'March', 'April', 'May', 'June',\
 BE_set = set(['is', 'am', 'are', 'was', 'were'])
 def generateWhen(sents, verbose=False):
     ques = ''
-    s_tree = parser.raw_parse(sents)[0]
-    print s_tree
+    sentence = parser.raw_parse(sents)
+    s_tree = list(sentence)[0]
+    #print s_tree
     nodes = []
     q = []
     # find all nodes with PP tag
@@ -182,7 +183,7 @@ def generateWhen(sents, verbose=False):
     # check whether can form any question
     if len(q) > 0:
         q = sorted(q, key=lambda x:x[1], reverse=True)
-        print q
+        #print q
         if q[0][1] > 3.0:
             q_token = q[0][0]
             # now come up with the question
@@ -198,19 +199,27 @@ def generateWhen(sents, verbose=False):
                         break
             sent = []
             done = False
+            keepV = False
             if index != 0:
                 for idx in xrange(index):
                     token = s_pos[idx][0]
                     tag = s_pos[idx][1]
                     if idx == 0 and token != 'I':
                         token = token.lower()
+                    if tag == ',':
+                        sent = []
+                        continue
                     if tag.startswith('VB'):
                         if done:
-                            sent.append(WordNetLemmatizer().lemmatize(token, 'v'))
+                            if not keepV:
+                                sent.append(WordNetLemmatizer().lemmatize(token, 'v'))
+                            else:
+                                sent.append(token)
                             continue
                         done = True                        
                         token = token.lower()
                         if token in BE_set:
+                            keepV = True
                             ques = 'When ' + token + ' '
                         else:
                             ques = 'When did '

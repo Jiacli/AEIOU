@@ -7,9 +7,17 @@ import generateQuestion
 import evaluation
 import operator
 import nltk.data
+from nltk.parse import stanford
+import nltk
 
 # gloabl control variables
 verbose = False
+
+# stanford parser
+path = '../../../jars/'
+os.environ['STANFORD_PARSER'] = path
+os.environ['STANFORD_MODELS'] = path
+parser = stanford.StanfordParser(model_path=path+"englishPCFG.ser.gz")
 
 # main routine
 def main(args):
@@ -21,35 +29,17 @@ def main(args):
     filename = parse_html_file(args[1])
 
     sentences = sent_segment(filename)
+    
     questions = ask(sentences, args[2])
 
     # clean up the temp raw text file
     os.system('rm ' + filename)
-    
-def parse_html_file(filename):
-    sent_list = []
-    with open(filename) as f:
-        for line in f.readlines():
-            if len(line.strip()) == 0:
-                continue
-            if line.startswith('<title>'):
-                tmp = re.sub('<[^>]+>', '', line.strip())
-                title = re.sub(r'\s+', '_', tmp)
-            elif line.startswith('<p>'):
-                line = re.sub('<[^>]+>', '', line.strip())
-                if len(line) > 0:
-                    sent_list.append(line)
-    newfilename = 'tmp_raw_text'
-    with open(newfilename, 'w') as g:
-        for line in sent_list:
-            g.write(line + '\n')
-    return newfilename
 
 def ask(sentences, number):
     # generate questions based on valid sentence list
-    q_list_what_who = dict()
+    q_list_wh = dict()
     q_list_easy = dict()
-    what_who_rst = []
+    wh_rst = []
     easy_rst = []
     counter = 0
     count = int(number)
@@ -62,7 +52,9 @@ def ask(sentences, number):
             # generate easy questions
             easy_rst.append(generateQuestion.generateEasyQuestion(sentence))
             # generate 'who' qustions
-            what_who_rst.append(generateQuestion.generateWhoAndWhat(sentence, False))
+            wh_rst.append(generateQuestion.generateWhoAndWhat(sentence))
+            # generate 'when' questions
+            wh_rst.append(generateQuestion.generateWhen(sentence))
         except UnicodeDecodeError:
             continue
 
@@ -73,26 +65,26 @@ def ask(sentences, number):
                 q_list_easy[sent] = perplexity
                 # print sent, perplexity
 
-        for sent in what_who_rst:
+        for sent in wh_rst:
             if len(sent) > 0:
                 # counter += 1
                 perplexity = evaluationModel.sentencePerp(sent)
-                q_list_what_who[sent] = perplexity
+                q_list_wh[sent] = perplexity
                 # print sent, perplexity
 
-    q_what_who_sort = sorted(q_list_what_who.items(), key=operator.itemgetter(1))
+    q_wh_sort = sorted(q_list_wh.items(), key=operator.itemgetter(1))
     q_easy_sort = sorted(q_list_easy.items(), key=operator.itemgetter(1))
 
     # print top n sentences
     index = 0
-    for sent in q_what_who_sort:
+    for sent in q_easy_sort:
         index += 1
         print sent[0]
         if index >= count / 2:
             break
 
     index = 0
-    for sent in q_easy_sort:
+    for sent in q_wh_sort:
         index += 1
         print sent[0]
         if index >= count / 2:
@@ -101,8 +93,8 @@ def ask(sentences, number):
 
     
 # article reading control parameters    
-valid_sents_length_lo = 50
-valid_sents_length_hi = 250
+valid_sents_length_lo = 100
+valid_sents_length_hi = 200
 
 
 # preprocess function - sentence parser
@@ -124,8 +116,8 @@ def sent_segment(filename, verbose=False):
                 continue            
             for sent in sents:
                 sent = re.sub('\([^\)]+\)', '', sent)
-                if len(sent) > ask.valid_sents_length_lo \
-                    and len(sent) < ask.valid_sents_length_hi \
+                if len(sent) > valid_sents_length_lo \
+                    and len(sent) < valid_sents_length_hi \
                     and (sent[0] in string.ascii_uppercase):
                     sentences.append(sent)
     # debug
@@ -136,9 +128,29 @@ def sent_segment(filename, verbose=False):
             i += 1
     return sentences
 
+# html parser
+def parse_html_file(filename):
+    sent_list = []
+    with open(filename) as f:
+        for line in f.readlines():
+            if len(line.strip()) == 0:
+                continue
+            if line.startswith('<title>'):
+                tmp = re.sub('<[^>]+>', '', line.strip())
+                title = re.sub(r'\s+', '_', tmp)
+            elif line.startswith('<p>'):
+                line = re.sub('<[^>]+>', '', line.strip())
+                if len(line) > 0:
+                    sent_list.append(line)
+    newfilename = 'tmp_raw_text'
+    with open(newfilename, 'w') as g:
+        for line in sent_list:
+            g.write(line + '\n')
+    return newfilename
+
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print 'Usage: ./ask article.txt count'
+        print 'Usage: ./ask article.htm count'
         exit(-1)
     main(sys.argv)
