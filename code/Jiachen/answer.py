@@ -51,6 +51,7 @@ def question_answer(question, text):
 
     # obtain the question type Y/N or WH first
     q_type = get_question_type(q_tree)
+    print q_type
     if q_type == None:
         ans = text
     elif q_type == 'Y/N':
@@ -136,13 +137,8 @@ def answer_whq(q_type, q_tree, text):
         ans = ans_who(s_tree[0], q_tree)
     elif q_type == 'WHEN':
         ans = ans_when(s_tree[0], q_tree)
-    elif q_type == 'WHERE':
-        pass
-    elif q_type == 'WHAT':
-        pass
-    elif q_type == 'HOW':
-        # not sure whether how should be here
-        pass
+    else:
+        ans = text
 
     # save me if I cannot find ans
     if ans == None or len(ans) == 0:
@@ -250,7 +246,7 @@ def sent_matching(idx): # idx is the question index
         match_list.append((score, j))
 
     match_list = sorted(match_list, key=lambda x:x[0], reverse=True)
-    #print match_list[0:5]
+    print match_list[0:5]
 
     if len(match_list) > 0:
         return match_list[0][1]
@@ -265,8 +261,8 @@ def get_match_score(s_feat, q_feat):
 
     # boolean match algorithm
     for i in xrange(featdim):
-        if q_feat[i] in sfeat_set:
-            q_match[i] += 1.0
+        if q_feat[i][0] in sfeat_set:
+            q_match[i] += q_feat[i][1]
 
     # eval the score: normalized by the log of sentence length
     # length discount function is very tricky ... deprecate it currently
@@ -349,27 +345,35 @@ def sent_feat_extract(tokens):
         prev_token = token
     return feats
 
-def ques_feat_extract(tokens):
-    # the tag in dropset will not be considered
-    # e.g., which who where when ...
-    dropset = set(['.', 'WP', 'WRB', 'WDT', 'WP$'])
 
+# the tag in DROPSET will not be considered
+# e.g., which who where when ...
+DROPSET = set(['.', 'WP', 'WRB', 'WDT', 'WP$'])
+WEIGHT_MAP = {'NN':1.0, 'VB':1.1, 'JJ':1.2, 'CC':1.1, 'TO': 0.75, 'DT':0.75, 'CD':1.1}
+def ques_feat_extract(tokens):
     feats = []
     tagged = nltk.pos_tag(tokens)
     #print tagged
     prev_token = ''
     prev_tag = ''
+    prev_weight = 0.0
     for idx in xrange(len(tagged)):
         token = tagged[idx][0]
         tag = tagged[idx][1]
 
-        if tag not in dropset:
-            feats.append(token)
+        if tag not in DROPSET:
+            # calculate feature weights
+            weight = 1.0
+            if tag[:2] in WEIGHT_MAP:
+                weight = WEIGHT_MAP[tag[:2]]
+            feats.append((token, weight))
             if len(prev_token) > 0:
+                biweight = prev_weight * weight
                 bifeat = prev_token + ' ' + token
-                feats.append(bifeat)
+                feats.append((bifeat, biweight))
             prev_token = token
             prev_tag = tag
+            prev_weight = weight
         else:
             prev_token = ''
             prev_tag = ''
