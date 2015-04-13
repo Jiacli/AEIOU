@@ -1,0 +1,146 @@
+(S
+  (NP (NNP Abu) (NNP Dhabi))
+  (VP
+    (VBZ lies)
+    (PP
+      (IN on)
+      (NP
+        (NP (DT a) (JJ T-shaped) (NN island))
+        (VP
+          (VBG jutting)
+          (PP (IN into) (NP (DT the) (NNP Persian) (NNP Gulf)))
+          (PP
+            (IN from)
+            (NP (DT the) (JJ central) (JJ western) (NN coast))))))))
+(S
+  (NP (NNP Abu) (NNP Dhabi))
+  (VP
+    (VBZ lies)
+    (PP
+      (IN on)
+      (NP
+        (NP (DT a) (JJ T-shaped) (NN island))
+        (VP
+          (VBG jutting)
+          (PP (IN into) (NP (DT the) (NNP Persian) (NNP Gulf)))
+          (PP
+            (IN from)
+            (NP (DT the) (JJ central) (JJ western) (NN coast))))))))
+1 : Who lies on a T-shaped island jutting into the Persian Gulf from the central western coast? perplexity:254.369106569
+1 : What lies on a T-shaped island jutting into the Persian Gulf from the central western coast? perplexity:232.394064859
+(S
+  (NP (DT The) (NN city) (JJ proper))
+  (VP
+    (VBD had)
+    (NP (NP (DT a) (NN population)) (PP (IN of) (NP (CD 921,000))))
+    (PP (IN in) (NP (CD 2013)))))
+(S
+  (NP (DT The) (NN city) (JJ proper))
+  (VP
+    (VBD had)
+    (NP (NP (DT a) (NN population)) (PP (IN of) (NP (CD 921,000))))
+    (PP (IN in) (NP (CD 2013)))))
+2 : Who had a population of 921,000 in 2013? perplexity:315.709525487
+2 : What had a population of 921,000 in 2013? perplexity:266.176032154
+(S
+  (NP (NNP Abu) (NNP Dhabi))
+  (VP
+    (VBZ houses)
+    (NP
+      (NP (JJ federal) (NN government) (NNS offices))
+      (, ,)
+      (VP
+        (VBZ is)
+        (NP
+          (NP
+            (NP (DT the) (NN seat))
+            (PP
+              (IN of)
+              (NP
+                (DT the)
+                (NNP United)
+                (NNP Arab)
+                (NNPS Emirates)
+                (NNP Government))))
+          (, ,)
+          (NP
+            (NP (NN home))
+            (PP
+              (TO to)
+              (NP
+                (DT the)
+                (NNP Abu)
+                (NNP Dhabi)
+                (NNP Emiri)
+                (NNP Family))))
+          (CC and)
+          (NP
+            (NP (DT the) (NNP President))
+            (PP (IN of) (NP (DT the) (NNP UAE))))))
+      (, ,)
+      (SBAR
+        (WHNP (WP who))
+        (S (VP (VBZ is) (PP (IN from) (NP (DT this) (NN family)))))))))
+(S
+  (NP (NNP Abu) (NNP Dhabi))
+  (VP
+    (VBZ houses)
+    (NP
+      (NP (JJ federal) (NN government) (NNS offices))
+      (, ,)
+      (VP
+        (VBZ is)
+        (NP
+          (NP
+            (NP (DT the) (NN seat))
+            (PP
+              (IN of)
+              (NP
+                (DT the)
+                (NNP United)
+                (NNP Arab)
+                (NNPS Emirates)
+                (NNP Government))))
+          (, ,)
+          (NP
+            (NP (NN home))
+            (PP
+              (TO to)
+              (NP
+                (DT the)
+                (NNP Abu)
+                (NNP Dhabi)
+                (NNP Emiri)
+                (NNP Family))))
+          (CC and)
+          (NP
+            (NP (DT the) (NNP President))
+            (PP (IN of) (NP (DT the) (NNP UAE))))))
+      (, ,)
+      (SBAR
+        (WHNP (WP who))
+        (S (VP (VBZ is) (PP (IN from) (NP (DT this) (NN family)))))))))
+3 : Who houses federal government offices? perplexity:572.776050362
+3 : What houses federal government offices? perplexity:443.411285516
+(S
+  (NP (NNP Abu) (NNP Dhabi))
+  (VP
+    (VBZ has)
+    (VP
+      (VBN grown)
+      (S
+        (VP
+          (TO to)
+          (VP (VB be) (NP (DT a) (NN cosmopolitan) (NNS metropolis))))))))
+(S
+  (NP (NNP Abu) (NNP Dhabi))
+  (VP
+    (VBZ has)
+    (VP
+      (VBN grown)
+      (S
+        (VP
+          (TO to)
+          (VP (VB be) (NP (DT a) (NN cosmopolitan) (NNS metropolis))))))))
+4 : Who has grown to be a cosmopolitan metropolis? perplexity:141.030022219
+4 : What has grown to be a cosmopolitan metropolis? perplexity:127.110655299

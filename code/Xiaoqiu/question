@@ -1,0 +1,72 @@
+(S
+  (NP (NNS Violinists) (CC and) (NNS collectors))
+  (ADJP
+    (RB particularly)
+    (JJ prize)
+    (SBAR
+      (S
+        (NP (DT the) (NNS instruments))
+        (VP
+          (VBD made)
+          (PP
+            (IN by)
+            (NP
+              (DT the)
+              (NNP Stradivari)
+              (, ,)
+              (NNP Guarneri)
+              (CC and)
+              (NNP Amati)
+              (NNS families)))
+          (PP (IN from) (NP (DT the) (JJ 16th)))
+          (PP
+            (PP
+              (TO to)
+              (NP
+                (NP (DT the) (JJ 18th) (NN century))
+                (PP
+                  (IN in)
+                  (NP (NNP Brescia) (CC and) (NNP Cremona)))))
+            (CC and)
+            (PP
+              (IN by)
+              (NP
+                (NP (NNP Jacob) (NNP Stainer))
+                (PP (IN in) (NP (NNP Austria)))))))))))
+(S
+  (NP (NNS Violinists) (CC and) (NNS collectors))
+  (ADJP
+    (RB particularly)
+    (JJ prize)
+    (SBAR
+      (S
+        (NP (DT the) (NNS instruments))
+        (VP
+          (VBD made)
+          (PP
+            (IN by)
+            (NP
+              (DT the)
+              (NNP Stradivari)
+              (, ,)
+              (NNP Guarneri)
+              (CC and)
+              (NNP Amati)
+              (NNS families)))
+          (PP (IN from) (NP (DT the) (JJ 16th)))
+          (PP
+            (PP
+              (TO to)
+              (NP
+                (NP (DT the) (JJ 18th) (NN century))
+                (PP
+                  (IN in)
+                  (NP (NNP Brescia) (CC and) (NNP Cremona)))))
+            (CC and)
+            (PP
+              (IN by)
+              (NP
+                (NP (NNP Jacob) (NNP Stainer))
+                (PP (IN in) (NP (NNP Austria)))))))))))
+1 : Who particularly prize the instruments made by the Stradivari , Guarneri and Amati families from the 16th to the 18th century in Brescia and Cremona and by Jacob Stainer in Austria? perplexity:248.115186501
+1 : What particularly prize the instruments made by the Stradivari , Guarneri and Amati families from the 16th to the 18th century in Brescia and Cremona and by Jacob Stainer in Austria? perplexity:236.55419362
