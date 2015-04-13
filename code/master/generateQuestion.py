@@ -110,9 +110,10 @@ def checkPersonName(root, verbose=True):
 
     return is_person
 
-def generateWhoAndWhat(sents, verbose=False):
+def generateWhoAndWhat(sents, parse_tree, verbose=False):
         ques = ''
-        sentences = parser.raw_parse(sents)
+        # sentences = parser.raw_parse(sents)
+        sentences = parse_tree[:]
         # stack indicates main component: NP, VP, NP
         stack = ['NP', 'V']
         is_who = False
@@ -158,9 +159,10 @@ DATE_set = set(['January', 'February', 'March', 'April', 'May', 'June',\
     'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
 
 BE_set = set(['is', 'am', 'are', 'was', 'were'])
-def generateWhen(sents, verbose=False):
+def generateWhen(sents, parse_tree, verbose=False):
     ques = ''
-    sentence = parser.raw_parse(sents)
+    sentence = parse_tree
+    # sentence = parser.raw_parse(sents)
     s_tree = list(sentence)[0]
     #print s_tree
     nodes = []
