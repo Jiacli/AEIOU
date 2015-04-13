@@ -29,6 +29,8 @@ def main(args):
     # features as stemmed token sequence (uni/bi-gram)
     preprocess(args)
 
+    f = open('tmp_ans', 'w')
+
     # Question answering routine:
     # loop over all questions in the main function
     for idx in xrange(len(ques_text)):
@@ -39,6 +41,8 @@ def main(args):
         ans = question_answer(ques_text[idx], sent_text[match_idx])
         
         print 'Ans:', ans, '\n'
+        f.write(ans + '\n')
+    f.close()
         
 
 
