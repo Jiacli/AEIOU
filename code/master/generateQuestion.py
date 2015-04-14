@@ -5,6 +5,7 @@ from nltk.stem.snowball import SnowballStemmer
 import nltk
 from nltk.tree import Tree
 from nltk.stem.wordnet import WordNetLemmatizer
+from pattern.en import superlative
 
 path = '../../../jars/'
 os.environ['STANFORD_PARSER'] = path
@@ -20,12 +21,13 @@ def checkAuxiliary(auxSet, tokens):
 
 def generateEasyQuestion(originalSentence, parse_tree):
     sentenceStrucutreStack = ['NP','V','NP']
-   # print "original parrse_tree,",parse_tree
+  #  print "original parrse_tree,",parse_tree
     originalSentence = dfs(parse_tree, 0, 0, sentenceStrucutreStack)[0]
    # print "processed original sentence,",originalSentence
     stemmer = SnowballStemmer("english")
     originalSentence = originalSentence[0].lower() + originalSentence[1:]
     tokens = nltk.word_tokenize(originalSentence)
+
     auxiliarySet = set(['is','are','was','were','did','does','did','must','may','can','could','should','will','would','has','have'])
     verbSet = set(['VB','VBD','VBG','VBP','VBZ'])
     question = ""
@@ -35,11 +37,19 @@ def generateEasyQuestion(originalSentence, parse_tree):
         findAuxiliary = False
         for index in xrange(len(tokens)):
             word = tokens[index]
-           
+            
             # if we find the auxilliary verb , move it to the front of the sentence
             if word in auxiliarySet :
                 for subSentence in originalSentence.split(","):
                     if word not in subSentence :
+                        subTokens = nltk.word_tokenize(subSentence)
+                        subTags = nltk.pos_tag(subTokens)
+                        tempSubSentence = ""
+                        for i in xrange(len(subTags)):
+                            word, tag = subTags[i]
+                            if tag == 'JJ':
+                                word = "the " + superlative(word)
+                            tempSubSentence += word + " "
                         question += subSentence
                         
                     elif not findAuxiliary:
@@ -66,10 +76,12 @@ def generateEasyQuestion(originalSentence, parse_tree):
             subSentence = subSentences[index]
             subTokens = nltk.word_tokenize(subSentence)
             subTagged = nltk.pos_tag(subTokens)
+           # print "the sentence tags,",subTagged
             newSubSentence = ""
             for i in xrange(len(subTagged)):
                 word, tag = subTagged[i]
                # print "the sentence tag tree word ",word, ",", tag
+
                 if not findVerb and tag in verbSet and i > 0:
                     verbExist = True
                     if tag == 'VBD':
@@ -83,6 +95,8 @@ def generateEasyQuestion(originalSentence, parse_tree):
                     findVerb = True
                     break
                 elif not findVerb:
+                    if tag == 'JJ':
+                        word = "the " + superlative(word)
                     newSubSentence += word + " "
                 elif len(subSentence)== 0 and len(subSentences) > 1 and tag == 'PP':
                     break
@@ -93,9 +107,27 @@ def generateEasyQuestion(originalSentence, parse_tree):
 
     if not verbExist:
         return ""
+    print "the original question,",question
     if len(question) > 0:
         question = question.rstrip('.,?! ')
-        rst = question[0].upper() + question[1 : ] + "?"
+        newTokens = nltk.word_tokenize(question)
+        newTags = nltk.pos_tag(newTokens)
+        tempQuestion = ""
+        changeAdj = False
+        for index in xrange(len(newTags)):
+            word, tag = newTags[index]
+            if tag == 'JJ':
+                if (index - 1) > 0 and newTags[index - 1] == 'a':
+                    if len(tempQuestion) > 2:
+                        tempQuestion = tempQuestion[0:-2]
+                if not changeAdj:
+                    word = "the " + superlative(word)
+                    changeAdj = True
+                    
+            tempQuestion += word + " "
+
+        rst = tempQuestion[0].upper() + tempQuestion[1: ] + "?"
+       # rst = question[0].upper() + question[1 : ] + "?"
     else:
         rst = question
     return rst
