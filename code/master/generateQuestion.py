@@ -497,5 +497,5 @@ def dfs_how(sentences, level, begin, main_component, original_component, find):
 
 if __name__ == '__main__':
     # used for function test
-    print generateHow('The language also influenced early on the Old Norse language through Viking invasions in the 9th and 10th centuries.', True)
+    #print generateHow('The language also influenced early on the Old Norse language through Viking invasions in the 9th and 10th centuries.', True)
     pass
