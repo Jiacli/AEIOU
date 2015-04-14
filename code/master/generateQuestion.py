@@ -119,9 +119,10 @@ def checkPersonName(root, verbose=True):
 
     return is_person
 
-def generateWhoAndWhat(sents, verbose=False):
+def generateWhoAndWhat(sents, parse_tree, verbose=False):
         ques = ''
-        sentences = parser.raw_parse(sents)
+        # sentences = parser.raw_parse(sents)
+        sentences = parse_tree[:]
         # stack indicates main component: NP, VP, NP
         stack = ['NP', 'V']
         is_who = False
@@ -167,9 +168,10 @@ DATE_set = set(['January', 'February', 'March', 'April', 'May', 'June',\
     'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
 
 BE_set = set(['is', 'am', 'are', 'was', 'were'])
-def generateWhen(sents, verbose=False):
+def generateWhen(sents, parse_tree, verbose=False):
     ques = ''
-    sentence = parser.raw_parse(sents)
+    sentence = parse_tree
+    # sentence = parser.raw_parse(sents)
     s_tree = list(sentence)[0]
     #print s_tree
     nodes = []
@@ -239,6 +241,24 @@ def generateWhen(sents, verbose=False):
 
     return ques 
 
+# generate how question
+# find NP VP NP through/by in one subsentece, then generate how question
+def generateHow(sents, verbose=False):
+    ques = ''
+    sentence = parser.raw_parse(sents)
+    # stack indicates main component: NP, VP, NP
+    stack = ['NP', 'V', 'NP']
+
+    # raw tree
+    root = list(sentences)[0][0]
+    if verbose:
+        print root
+
+        # drop PP subsentence
+    if root[0].label() == 'PP' and root[1].label() == ',':
+        if root[2].label() == 'NP':
+            [ques, flag] = dfs_how(root, 0, 3, stack)
+
 def find_treenode_given_tag(root, tag, nodes):
     # the results are stored in the nodes list
     for child in root:
@@ -248,7 +268,7 @@ def find_treenode_given_tag(root, tag, nodes):
             nodes.append(child)
         find_treenode_given_tag(child, tag, nodes)
 
-
+# extract the main component of sentences
 def dfs(sentences, level, begin, main_component):
     ques = ''
     index = 0
@@ -282,6 +302,39 @@ def dfs(sentences, level, begin, main_component):
         index += 1
     return [ques, False]
 
+# extract main component of sentences
+def dfs_how(sentences, level, begin, main_component):
+    ques = ''
+    index = 0
+    for child in sentences:
+        if index < begin:
+            index += 1
+            continue           
+        elif isinstance(child, Tree):
+            # drop SBAR subsentence
+            if child.label() == 'SBAR' and len(main_component) == 0:
+                continue
+
+            # if comma appears when main components all appear, ignore others
+            if len(main_component) == 0 and child.label() == ',':
+                return [ques, True]
+
+            [temp, flag] = dfs(child, level+1, 0, main_component)
+            ques += temp
+            # ignore subsentece after comma
+            if flag:
+                return [ques, True]
+
+            if len(main_component) != 0 and \
+                child.label().startswith(main_component[len(main_component)-1]):
+                #print child.label()
+                main_component.pop()
+
+        else:
+            # print child
+            ques += ' '+child
+        index += 1
+    return [ques, False]
 
 if __name__ == '__main__':
     # used for function test

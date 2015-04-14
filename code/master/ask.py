@@ -48,14 +48,18 @@ def ask(sentences, number):
     for sentence in sentences:
         
         # catch unexpected error
+        if sentence.endswith('.'):
+            sentence = sentence[:-1]
         try:
+            # print sentence
+            parse_tree = parser.raw_parse(sentence)
             # generate easy questions
-            easy_rst.append(generateQuestion.generateEasyQuestion(sentence))
+            easy_rst.append(generateQuestion.generateEasyQuestion(sentence, parse_tree[:]))
             # generate 'who' qustions
-            wh_rst.append(generateQuestion.generateWhoAndWhat(sentence))
+            wh_rst.append(generateQuestion.generateWhoAndWhat(sentence, parse_tree[:]))
             # generate 'when' questions
-            wh_rst.append(generateQuestion.generateWhen(sentence))
-        except UnicodeDecodeError:
+            wh_rst.append(generateQuestion.generateWhen(sentence, parse_tree[:]))
+        except Exception:
             continue
 
         for sent in easy_rst:
