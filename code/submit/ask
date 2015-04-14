@@ -47,14 +47,20 @@ def ask(sentences, number):
     for sentence in sentences:
         
         # catch unexpected error
+        if sentence.endswith('.'):
+            sentence = sentence[:-1]
         try:
+            # print sentence
+            parse_tree = parser.raw_parse(sentence)
             # generate easy questions
-            easy_rst.append(generateQuestion.generateEasyQuestion(sentence))
+            easy_rst.append(generateQuestion.generateEasyQuestion(sentence, parse_tree[:]))
             # generate 'who' qustions
-            wh_rst.append(generateQuestion.generateWhoAndWhat(sentence))
+            wh_rst.append(generateQuestion.generateWhoAndWhat(sentence, parse_tree[:]))
             # generate 'when' questions
-            wh_rst.append(generateQuestion.generateWhen(sentence))
-        except UnicodeDecodeError:
+            wh_rst.append(generateQuestion.generateWhen(sentence, parse_tree[:]))
+            # generate 'how' questions
+            wh_rst.append(generateQuestion.generateHow(sentence, parse_tree[:]))
+        except Exception:
             continue
 
         for sent in easy_rst:
@@ -115,8 +121,8 @@ def sent_segment(filename, verbose=False):
                 continue            
             for sent in sents:
                 sent = re.sub('\([^\)]+\)', '', sent)
-                if len(sent) > ask.valid_sents_length_lo \
-                    and len(sent) < ask.valid_sents_length_hi \
+                if len(sent) > valid_sents_length_lo \
+                    and len(sent) < valid_sents_length_hi \
                     and (sent[0] in string.ascii_uppercase):
                     sentences.append(sent)
     # debug

@@ -284,21 +284,58 @@ def generateWhen(sents, parse_tree, verbose=False):
 
 # generate how question
 # find NP VP NP through/by in one subsentece, then generate how question
-def generateHow(sents, verbose=False):
+def generateHow(sents, parse_tree, verbose=False):
     ques = ''
-    sentence = parser.raw_parse(sents)
+    sentence = parse_tree
     # stack indicates main component: NP, VP, NP
-    stack = ['NP', 'V', 'NP']
+    stack = ['NP', 'V']
+    stack1 = ['NP', 'V']
 
     # raw tree
-    root = list(sentences)[0][0]
+    root = list(sentence)[0][0]
     if verbose:
         print root
 
-        # drop PP subsentence
+    # drop PP subsentence
+    find = False
     if root[0].label() == 'PP' and root[1].label() == ',':
         if root[2].label() == 'NP':
-            [ques, flag] = dfs_how(root, 0, 3, stack)
+            [ques, find] = dfs_how(root, 0, 3, stack, stack1, find)
+    elif root[0].label() == 'NP':
+        [ques, find] = dfs_how(root, 0, 0, stack, stack1, find)
+    else:
+        return ques
+
+    # print ques, find
+    if ques != '' and find:
+        ques = ques.strip()[0].lower()+ques.strip()[1:]
+        ques_word = ques.split(" ")
+
+        # find verb in sentence
+        # tokenized and pos
+        tokens = nltk.word_tokenize(ques)
+        tagged = nltk.pos_tag(tokens)
+        index = 0
+        normal = True
+        for word in ques_word:
+            if word in BE_set:
+                break
+            elif tagged[index][1].startswith('V'):
+                ques_word[index] = WordNetLemmatizer().lemmatize(ques_word[index], 'v')
+                normal = False
+                break
+            index += 1
+
+        # print normal, index
+        if normal:
+            return 'How '+ques_word[index]+' '+' '.join(ques_word[:index])+' '+' '.join(ques_word[index+1:])+'?'
+        else:
+            return 'How did '+' '.join(ques_word)+'?'
+
+    else:
+        return ''
+
+    return ques
 
 def find_treenode_given_tag(root, tag, nodes):
     # the results are stored in the nodes list
@@ -344,7 +381,7 @@ def dfs(sentences, level, begin, main_component):
     return [ques, False]
 
 # extract main component of sentences
-def dfs_how(sentences, level, begin, main_component):
+def dfs_how(sentences, level, begin, main_component, original_component, find):
     ques = ''
     index = 0
     for child in sentences:
@@ -352,18 +389,14 @@ def dfs_how(sentences, level, begin, main_component):
             index += 1
             continue           
         elif isinstance(child, Tree):
-            # drop SBAR subsentence
-            if child.label() == 'SBAR' and len(main_component) == 0:
-                continue
-
             # if comma appears when main components all appear, ignore others
-            if len(main_component) == 0 and child.label() == ',':
-                return [ques, True]
+            if child.label() == ',' and not find:
+                main_component = original_component[:]
 
-            [temp, flag] = dfs(child, level+1, 0, main_component)
+            [temp, find] = dfs_how(child, level+1, 0, main_component, original_component, find)
             ques += temp
             # ignore subsentece after comma
-            if flag:
+            if find:
                 return [ques, True]
 
             if len(main_component) != 0 and \
@@ -373,11 +406,17 @@ def dfs_how(sentences, level, begin, main_component):
 
         else:
             # print child
+            if child == 'through':# or child == 'by':
+                if len(main_component) == 0:
+                    return [ques, True]
+
             ques += ' '+child
+            # print ques
+
         index += 1
     return [ques, False]
 
 if __name__ == '__main__':
     # used for function test
-    #generateWhen('Dyer released his new homework on first Sunday of 2016.', True)
+    print generateHow('The language also influenced early on the Old Norse language through Viking invasions in the 9th and 10th centuries.', True)
     pass

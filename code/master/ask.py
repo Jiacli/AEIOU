@@ -39,7 +39,9 @@ def ask(sentences, number):
     # generate questions based on valid sentence list
     q_list_wh = dict()
     q_list_easy = dict()
+    q_list_what = dict()
     wh_rst = []
+    what_rst = []
     easy_rst = []
     counter = 0
     count = int(number)
@@ -56,9 +58,11 @@ def ask(sentences, number):
             # generate easy questions
             easy_rst.append(generateQuestion.generateEasyQuestion(sentence, parse_tree[:]))
             # generate 'who' qustions
-            wh_rst.append(generateQuestion.generateWhoAndWhat(sentence, parse_tree[:]))
+            what_rst.append(generateQuestion.generateWhoAndWhat(sentence, parse_tree[:]))
             # generate 'when' questions
             wh_rst.append(generateQuestion.generateWhen(sentence, parse_tree[:]))
+            # generate 'how' questions
+            wh_rst.append(generateQuestion.generateHow(sentence, parse_tree[:]))
         except Exception:
             continue
 
@@ -69,6 +73,13 @@ def ask(sentences, number):
                 q_list_easy[sent] = perplexity
                 # print sent, perplexity
 
+        for sent in what_rst:
+            if len(sent) > 0:
+                # counter += 1
+                perplexity = evaluationModel.sentencePerp(sent)
+                q_list_what[sent] = perplexity
+                # print sent, perplexity
+
         for sent in wh_rst:
             if len(sent) > 0:
                 # counter += 1
@@ -76,6 +87,7 @@ def ask(sentences, number):
                 q_list_wh[sent] = perplexity
                 # print sent, perplexity
 
+    q_what_sort = sorted(q_list_what.items(), key=operator.itemgetter(1))
     q_wh_sort = sorted(q_list_wh.items(), key=operator.itemgetter(1))
     q_easy_sort = sorted(q_list_easy.items(), key=operator.itemgetter(1))
 
@@ -84,14 +96,19 @@ def ask(sentences, number):
     for sent in q_easy_sort:
         index += 1
         print sent[0]
-        if index >= count / 2:
+        if index > count / 3:
             break
 
-    index = 0
     for sent in q_wh_sort:
         index += 1
         print sent[0]
-        if index >= count / 2:
+        if index > (count / 3)*2:
+            break
+
+    for sent in q_what_sort:
+        index += 1
+        print sent[0]
+        if index <= count:
             break
     # return q_list
 
