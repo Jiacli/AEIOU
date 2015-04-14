@@ -27,8 +27,13 @@ def main(args):
 
     # parse the html file and return the raw text filename
     filename = parse_html_file(args[1])
-
-    sentences = sent_segment(filename)
+    sentences = []
+    lower = 120
+    upper = 180
+    while len(sentences) < 30:
+        lower -= 20
+        upper += 20
+        sentences = sent_segment(filename, lower, upper)
     
     questions = ask(sentences, args[2])
 
@@ -109,15 +114,10 @@ def ask(sentences, number):
         if index > count:
             break
 
-    
-# article reading control parameters    
-valid_sents_length_lo = 100
-valid_sents_length_hi = 200
-
 
 # preprocess function - sentence parser
 SENT_DETECTOR = 'tokenizers/punkt/english.pickle'
-def sent_segment(filename, verbose=False):
+def sent_segment(filename, valid_len_lower = 100, valid_len_upper = 200):
     # configure nltk package
     sent_detector = nltk.data.load(SENT_DETECTOR)
 
@@ -138,12 +138,6 @@ def sent_segment(filename, verbose=False):
                     and len(sent) < valid_sents_length_hi \
                     and (sent[0] in string.ascii_uppercase):
                     sentences.append(sent)
-    # debug
-    if verbose:
-        i = 0
-        for sent in sentences:
-            print i, sent
-            i += 1
     return sentences
 
 # html parser
