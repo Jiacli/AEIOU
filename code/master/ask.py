@@ -3,7 +3,7 @@
 import sys, os
 import re
 import string
-import generateQuestion
+import generateQuestion as genQ
 import evaluation
 import operator
 import nltk.data
@@ -37,9 +37,9 @@ def main(args):
 
 def ask(sentences, number):
     # generate questions based on valid sentence list
-    q_list_wh = dict()
-    q_list_easy = dict()
-    q_list_what = dict()
+    q_list_wh = []
+    q_list_easy = []
+    q_list_what = []
     wh_rst = []
     what_rst = []
     easy_rst = []
@@ -48,7 +48,6 @@ def ask(sentences, number):
     evaluationModel = evaluation.interpolateModel()
 
     for sentence in sentences:
-        
         # catch unexpected error
         if sentence.endswith('.'):
             sentence = sentence[:-1]
@@ -56,13 +55,15 @@ def ask(sentences, number):
             # print sentence
             parse_tree = parser.raw_parse(sentence)
             # generate easy questions
-            easy_rst.append(generateQuestion.generateEasyQuestion(sentence, parse_tree[:]))
+            easy_rst.append(genQ.generateEasyQuestion(sentence, parse_tree[:]))
             # generate 'who' qustions
-            what_rst.append(generateQuestion.generateWhoAndWhat(sentence, parse_tree[:]))
+            what_rst.append(genQ.generateWhoAndWhat(sentence, parse_tree[:]))
             # generate 'when' questions
-            wh_rst.append(generateQuestion.generateWhen(sentence, parse_tree[:]))
+            wh_rst.append(genQ.generateWhen(sentence, parse_tree[:]))
             # generate 'how' questions
-            wh_rst.append(generateQuestion.generateHow(sentence, parse_tree[:]))
+            wh_rst.append(genQ.generateHow(sentence, parse_tree[:]))
+            # generate 'how long' questions
+            wh_rst.append(genQ.generateHowLong(sentence, parse_tree[:]))
         except Exception:
             continue
 
@@ -70,26 +71,23 @@ def ask(sentences, number):
             if len(sent) > 0:
                 # counter += 1
                 perplexity = evaluationModel.sentencePerp(sent)
-                q_list_easy[sent] = perplexity
-                # print sent, perplexity
+                q_list_easy.append(sent, perplexity)
 
         for sent in what_rst:
             if len(sent) > 0:
                 # counter += 1
                 perplexity = evaluationModel.sentencePerp(sent)
-                q_list_what[sent] = perplexity
-                # print sent, perplexity
+                q_list_what.append(sent, perplexity)
 
         for sent in wh_rst:
             if len(sent) > 0:
                 # counter += 1
                 perplexity = evaluationModel.sentencePerp(sent)
-                q_list_wh[sent] = perplexity
-                # print sent, perplexity
+                q_list_wh.append(sent, perplexity)
 
-    q_what_sort = sorted(q_list_what.items(), key=operator.itemgetter(1))
-    q_wh_sort = sorted(q_list_wh.items(), key=operator.itemgetter(1))
-    q_easy_sort = sorted(q_list_easy.items(), key=operator.itemgetter(1))
+    q_what_sort = sorted(q_list_what, key=lambda x:x[1], reverse=True)
+    q_wh_sort = sorted(q_list_wh, key=lambda x:x[1], reverse=True)
+    q_easy_sort = sorted(q_list_easy, key=lambda x:x[1], reverse=True)
 
     # print top n sentences
     index = 0
@@ -110,7 +108,6 @@ def ask(sentences, number):
         print sent[0]
         if index > count:
             break
-    # return q_list
 
     
 # article reading control parameters    

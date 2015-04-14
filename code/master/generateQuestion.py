@@ -341,8 +341,8 @@ def generateHow(sents, parse_tree, verbose=False):
 # How long questions
 DURATION_set = set(['year', 'years', 'days', 'day', 'hours', 'hour', 'month', 'months', 'decades', 'decade'])
 H_set = set(['have', 'has', 'had'])
-def generateHowLong(text, parse_tree, verbose=False):
 
+def generateHowLong(text, parse_tree):
     # no for in this sentence, drop it
     if ' for ' not in text:
         return ''
