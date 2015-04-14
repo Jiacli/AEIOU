@@ -18,13 +18,16 @@ def checkAuxiliary(auxSet, tokens):
            return True
     return False
 
-def generateEasyQuestion(originalSentence):
+def generateEasyQuestion(originalSentence, parse_tree):
+    sentenceStrucutreStack = ['NP','V','NP']
+    originalSentence = dfs(parse_tree, 0, 0, sentenceStrucutreStack)
     stemmer = SnowballStemmer("english")
     originalSentence = originalSentence[0].lower() + originalSentence[1:]
     tokens = nltk.word_tokenize(originalSentence)
     auxiliarySet = set(['is','are','was','were','did','does','did','must','may','can','could','should','will','would','has','have'])
     verbSet = set(['VB','VBD','VBG','VBP','VBZ'])
     question = ""
+    verbExist = False
     # in this case we will move the verb to the first and generate new question
     if checkAuxiliary(auxiliarySet, tokens):
         findAuxiliary = False
@@ -49,13 +52,13 @@ def generateEasyQuestion(originalSentence):
                                 findAuxiliary = True
                         question += newSubSentence[0:-1]
                         
-                    
-
                     question += ","  
+                verbExist = True
                 break
     else:   
     # in this case we will keep the verb at the place it is, change it into its original form and add auxiliary verb
         findVerb = False
+        
         subSentences = originalSentence.split(",")
         for index in xrange(len(subSentences)):
             subSentence = subSentences[index]
@@ -64,24 +67,30 @@ def generateEasyQuestion(originalSentence):
             newSubSentence = ""
             for i in xrange(len(subTagged)):
                 word, tag = subTagged[i]
+               # print "the sentence tag tree word ",word, ",", tag
                 if not findVerb and tag in verbSet and i > 0:
+                    verbExist = True
                     if tag == 'VBD':
                         origianlForm = stemmer.stem(word)
                         newSubSentence = "did " + newSubSentence + " " + origianlForm + subSentence[(subSentence.index(word) + len(word)):]
-                    elif tag == 'VBP' or tag == 'VPZ':
+                    elif tag == 'VBP' or tag == 'VBZ':
                         origianlForm = stemmer.stem(word)
                         newSubSentence = "does " + newSubSentence + " " + origianlForm + subSentence[(subSentence.index(word) + len(word)):]
-                    else:
+                    elif tag == 'VB':
                         newSubSentence = "do " + newSubSentence + " " + word + subSentence[(subSentence.index(word) + len(word)):]
                     findVerb = True
                     break
                 elif not findVerb:
                     newSubSentence += word + " "
+                elif len(subSentence)== 0 and len(subSentences) > 1 and tag == 'PP':
+                    break
                 else:
                     newSubSentence = subSentence
                     break
             question += newSubSentence + ","
 
+    if not verbExist:
+        return ""
     if len(question) > 0:
         question = question.rstrip('.,?! ')
         rst = question[0].upper() + question[1 : ] + "?"
