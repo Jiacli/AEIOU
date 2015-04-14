@@ -27,7 +27,8 @@ def generateEasyQuestion(originalSentence, parse_tree):
     stemmer = SnowballStemmer("english")
     originalSentence = originalSentence[0].lower() + originalSentence[1:]
     tokens = nltk.word_tokenize(originalSentence)
-
+    tags = nltk.pos_tag(tokens)
+    print "see the whole sentence tokens, ",tags
     auxiliarySet = set(['is','are','was','were','did','does','did','must','may','can','could','should','will','would','has','have'])
     verbSet = set(['VB','VBD','VBG','VBP','VBZ'])
     question = ""
@@ -123,7 +124,7 @@ def generateEasyQuestion(originalSentence, parse_tree):
                 if not changeAdj:
                     word = "the " + superlative(word)
                     changeAdj = True
-                    
+
             tempQuestion += word + " "
 
         rst = tempQuestion[0].upper() + tempQuestion[1: ] + "?"
