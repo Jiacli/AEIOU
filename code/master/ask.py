@@ -54,7 +54,7 @@ def ask(sentences, number):
             # print sentence
             parse_tree = parser.raw_parse(sentence)
             # generate easy questions
-            easy_rst.append(generateQuestion.generateEasyQuestion(sentence))
+            easy_rst.append(generateQuestion.generateEasyQuestion(sentence, parse_tree[:]))
             # generate 'who' qustions
             wh_rst.append(generateQuestion.generateWhoAndWhat(sentence, parse_tree[:]))
             # generate 'when' questions
