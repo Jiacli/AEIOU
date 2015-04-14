@@ -22,13 +22,13 @@ def checkAuxiliary(auxSet, tokens):
 def generateEasyQuestion(originalSentence, parse_tree):
     sentenceStrucutreStack = ['NP','V','NP']
   #  print "original parrse_tree,",parse_tree
-    originalSentence = dfs(parse_tree, 0, 0, sentenceStrucutreStack)[0]
+    originalSentence = dfs(parse_tree, 0, 0, sentenceStrucutreStack)[0].strip()
    # print "processed original sentence,",originalSentence
     stemmer = SnowballStemmer("english")
     originalSentence = originalSentence[0].lower() + originalSentence[1:]
     tokens = nltk.word_tokenize(originalSentence)
     tags = nltk.pos_tag(tokens)
-    print "see the whole sentence tokens, ",tags
+   # print "see the whole sentence tokens, ",tags
     auxiliarySet = set(['is','are','was','were','did','does','did','must','may','can','could','should','will','would','has','have'])
     verbSet = set(['VB','VBD','VBG','VBP','VBZ'])
     question = ""
@@ -108,7 +108,7 @@ def generateEasyQuestion(originalSentence, parse_tree):
 
     if not verbExist:
         return ""
-    print "the original question,",question
+  #  print "the original question,",question
     if len(question) > 0:
         question = question.rstrip('.,?! ')
         newTokens = nltk.word_tokenize(question)
@@ -118,10 +118,16 @@ def generateEasyQuestion(originalSentence, parse_tree):
         for index in xrange(len(newTags)):
             word, tag = newTags[index]
             if tag == 'JJ':
-                if (index - 1) > 0 and newTags[index - 1] == 'a':
-                    if len(tempQuestion) > 2:
-                        tempQuestion = tempQuestion[0:-2]
-                if not changeAdj:
+
+                if (index - 1) > 0 :
+                    lastWord, lastTag = newTags[index - 1]
+
+                    if len(tempQuestion) > 2 and lastTag == 'TD' :
+                        if lastWord == 'a':
+                            tempQuestion = tempQuestion[0:-2]
+                        elif  len(tempQuestion) > 4 and (lastWord == 'the' or lastWord == 'The'):
+                            tempQuestion = tempQuestion[0:-4]
+                if not changeAdj and lastTag != 'RB' and lastWord != "the":
                     word = "the " + superlative(word)
                     changeAdj = True
 
