@@ -20,7 +20,9 @@ def checkAuxiliary(auxSet, tokens):
 
 def generateEasyQuestion(originalSentence, parse_tree):
     sentenceStrucutreStack = ['NP','V','NP']
-    originalSentence = dfs(parse_tree, 0, 0, sentenceStrucutreStack)
+   # print "original parrse_tree,",parse_tree
+    originalSentence = dfs(parse_tree, 0, 0, sentenceStrucutreStack)[0]
+   # print "processed original sentence,",originalSentence
     stemmer = SnowballStemmer("english")
     originalSentence = originalSentence[0].lower() + originalSentence[1:]
     tokens = nltk.word_tokenize(originalSentence)
