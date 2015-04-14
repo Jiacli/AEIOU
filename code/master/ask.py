@@ -108,7 +108,7 @@ def ask(sentences, number):
     for sent in q_what_sort:
         index += 1
         print sent[0]
-        if index <= count:
+        if index > count:
             break
     # return q_list
 
