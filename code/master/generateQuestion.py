@@ -337,6 +337,85 @@ def generateHow(sents, parse_tree, verbose=False):
 
     return ques
 
+
+# How long questions
+DURATION_set = set(['year', 'years', 'days', 'day', 'hours', 'hour', 'month', 'months', 'decades', 'decade'])
+H_set = set(['have', 'has', 'had'])
+def generateHowLong(text, parse_tree, verbose=False):
+
+    # no for in this sentence, drop it
+    if ' for ' not in text:
+        return ''
+    ques = ''
+    s_tree = list(parse_tree)[0]
+
+    nodes = []
+    q = []
+    # find all nodes with PP tag
+    find_treenode_given_tag(s_tree, 'PP', nodes)
+    for node in nodes:
+        nodepos = node.pos()
+        if nodepos[0][0] != 'for':
+            continue
+        s = 0.0
+        # eval
+        for (token, tag) in nodepos:
+            if token in DURATION_set:
+                s += 2.0
+            elif tag == 'CD':
+                s += 1.5
+        if s > 0.0:
+            q.append((node.leaves(), s))
+
+    if len(q) > 0:
+        q = sorted(q, key=lambda x:x[1], reverse=True)
+        pp = q[0][0]
+
+        tokens = s_tree.leaves()
+        labels = [0] * len(tokens)
+        first_idx = -1
+        for idx in xrange(len(tokens)):
+            token = tokens[idx]
+            if token == pp[0]:
+                ct = 1
+                for i in xrange(1,len(pp)):
+                    if tokens[idx+i] == pp[i]:
+                        ct += 1
+                    else:
+                        break
+                if ct == len(pp):
+                    for i in xrange(idx, len(tokens)):
+                        labels[i] = -1
+                    for j in xrange(idx-1, -1, -1):
+                        if tokens[j] != ',' and tokens[idx] != ';':
+                            labels[j] = 1
+                        else:
+                            break
+                    break
+        findh = ''
+        for idx in xrange(len(labels)):
+            if labels[idx] == 1:
+                if tokens[idx] in H_set:
+                    findh = tokens[idx]
+                    labels[idx] = -1
+                    break
+        # merge sentence
+        if len(findh) > 0:
+            pre = ''
+            suf = ''
+            for i in xrange(len(labels)):
+                if labels[i] == 0:
+                    pre += tokens[i] + ' '
+                elif labels[i] == 1:
+                    suf += tokens[i] + ' '
+            if len(pre) > 0:
+                ques = pre + 'how long ' + findh + ' ' + suf + '?'
+            else:
+                ques = 'How long ' + findh + ' ' + suf + '?'
+    if ques == None:
+        ques = ''
+    return ques
+
 def find_treenode_given_tag(root, tag, nodes):
     # the results are stored in the nodes list
     for child in root:
